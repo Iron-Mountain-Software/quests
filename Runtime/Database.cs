@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ARISE.Gameplay.Quests.Extraction;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace ARISE.Gameplay.Quests
+namespace IronMountain.Quests
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Gameplay/Quests/Database")]
     public class Database : ScriptableObject

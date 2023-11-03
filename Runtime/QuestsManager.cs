@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using ARISE.Gameplay.Quests.Extraction;
 using UnityEngine;
 
-namespace ARISE.Gameplay.Quests
+namespace IronMountain.Quests
 {
     public class QuestsManager : MonoBehaviour
     {

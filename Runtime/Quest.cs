@@ -8,7 +8,7 @@ using IronMountain.ScriptableActions;
 using UnityEngine;
 using UnityEngine.Localization;
 
-namespace ARISE.Gameplay.Quests.Extraction
+namespace IronMountain.Quests
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Gameplay/Quests/Quest")]
     public class Quest : ScriptableObject

@@ -1,9 +1,8 @@
-using ARISE.Gameplay.Quests.Extraction;
 using IronMountain.Conditions;
 using IronMountain.Conditions.Runtime;
 using UnityEngine;
 
-namespace ARISE.Gameplay.Quests.Conditions
+namespace IronMountain.Quests.Conditions
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Gameplay/Quests/Conditions/Quest Requirement Tracking")]
     public class ConditionQuestRequirementState : Condition

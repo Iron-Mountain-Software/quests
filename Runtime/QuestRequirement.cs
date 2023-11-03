@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization;
 
-namespace ARISE.Gameplay.Quests.Extraction
+namespace IronMountain.Quests
 {
     public class QuestRequirement : ScriptableObject
     {
