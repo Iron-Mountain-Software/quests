@@ -1,0 +1,20 @@
+{
+    "name": "com.iron-mountain.quests",
+    "rootNamespace": "IronMountain.Quests",
+    "references": [
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5",
+        "GUID:aa014cdb436c1461e8ac02d61d3d3867",
+        "GUID:9b5de69568e1049369185688465ca456",
+        "GUID:f30a927ff106244149e91de7a09f67a1",
+        "GUID:2e77701fe0ceda44fb763f03ee704c37"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
