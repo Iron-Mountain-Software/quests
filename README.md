@@ -1,11 +1,11 @@
 # Quests
-*Version: 1.0.0*
+*Version: 1.0.2*
 ## Description: 
 Scriptable Object Quests.
 ## Dependencies: 
 * com.unity.localization (1.3.2)
-* com.iron-mountain.conditions (1.2.0)
-* com.iron-mountain.scriptable-actions (1.0.2)
+* com.iron-mountain.conditions (1.2.4)
+* com.iron-mountain.scriptable-actions (1.0.4)
 * com.iron-mountain.save-system (1.0.2)
 ## Package Mirrors: 
 [<img src='https://img.itch.zone/aW1nLzEzNzQ2ODk4LnBuZw==/original/Rv4m96.png'>](https://iron-mountain.itch.io/quests)[<img src='https://img.itch.zone/aW1nLzEzNzQ2ODg3LnBuZw==/original/npRUfq.png'>](https://github.com/Iron-Mountain-Software/quests.git)[<img src='https://img.itch.zone/aW1nLzEzNzQ2ODkyLnBuZw==/original/Fq0ORM.png'>](https://www.npmjs.com/package/com.iron-mountain.quests)
@@ -21,25 +21,6 @@ Scriptable Object Quests.
       * public void ***SortList***()
       * public void ***RebuildDictionary***()
       * public override String ***ToString***()
-1. public class **QuestsManager** : MonoBehaviour
-### Conditions
-1. public class **ConditionQuestRequirementState** : Condition
-   * Properties: 
-      * public String ***DefaultName***  { get; }
-      * public String ***NegatedName***  { get; }
-      * public Sprite ***Depiction***  { get; }
-   * Methods: 
-      * public override Boolean ***Evaluate***()
-      * public override Boolean ***HasErrors***()
-1. public class **ConditionQuestState** : Condition
-   * Properties: 
-      * public String ***DefaultName***  { get; }
-      * public String ***NegatedName***  { get; }
-      * public Sprite ***Depiction***  { get; }
-   * Methods: 
-      * public override Boolean ***Evaluate***()
-      * public override Boolean ***HasErrors***()
-### Extraction
 1. public class **Quest** : ScriptableObject
    * Actions: 
       * public event Action ***OnStateChanged*** 
@@ -87,3 +68,21 @@ Scriptable Object Quests.
       * public virtual void ***Reset***()
       * public virtual void ***OnValidate***()
       * public virtual Boolean ***HasErrors***()
+1. public class **QuestsManager** : MonoBehaviour
+### Conditions
+1. public class **ConditionQuestRequirementState** : Condition
+   * Properties: 
+      * public String ***DefaultName***  { get; }
+      * public String ***NegatedName***  { get; }
+      * public Sprite ***Depiction***  { get; }
+   * Methods: 
+      * public override Boolean ***Evaluate***()
+      * public override Boolean ***HasErrors***()
+1. public class **ConditionQuestState** : Condition
+   * Properties: 
+      * public String ***DefaultName***  { get; }
+      * public String ***NegatedName***  { get; }
+      * public Sprite ***Depiction***  { get; }
+   * Methods: 
+      * public override Boolean ***Evaluate***()
+      * public override Boolean ***HasErrors***()

@@ -41,7 +41,7 @@ namespace IronMountain.Quests
         [SerializeField] private List<QuestRequirement> dependencies = new ();
         [SerializeField] private List<ScriptableAction> actionsOnTrack = new ();
         [SerializeField] private List<ScriptableAction> actionsOnComplete = new ();
-        [SerializeField] private Condition condition;
+        [SerializeField] public Condition condition;
         [SerializeField] private Sprite depiction;
         
         public Quest Quest

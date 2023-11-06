@@ -2,7 +2,11 @@
     "name": "com.iron-mountain.quests.Editor",
     "rootNamespace": "IronMountain.Quests",
     "references": [
-        "GUID:5a87a0567069f4a5daf240c8de2836cf"
+        "GUID:5a87a0567069f4a5daf240c8de2836cf",
+        "GUID:aa014cdb436c1461e8ac02d61d3d3867",
+        "GUID:10cd99ef3f4fb4150992455d6678b2b7",
+        "GUID:f30a927ff106244149e91de7a09f67a1",
+        "GUID:b42fd05bd8bb34cf0b8eaf326ce6fa1f"
     ],
     "includePlatforms": [
         "Editor"

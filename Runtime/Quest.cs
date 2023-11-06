@@ -42,7 +42,7 @@ namespace IronMountain.Quests
         [SerializeField] private StoryType type;
         [SerializeField] private int priority;
 
-        [SerializeField] private Condition prerequisites;
+        [SerializeField] public Condition prerequisites;
         [SerializeField] private List<ScriptableAction> actionsOnActivate = new();
         [SerializeField] private List<ScriptableAction> actionsOnComplete = new();
         [SerializeField] private List<QuestRequirement> requirements = new();

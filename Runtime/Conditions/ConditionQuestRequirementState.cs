@@ -26,8 +26,8 @@ namespace IronMountain.Quests.Conditions
         public override bool Evaluate() => requirement && EvaluationUtilities.Compare((int) requirement.State, (int) state, comparisonType);
         
         public override string DefaultName => comparisonType == BooleanComparisonType.Is
-            ? (requirement ? requirement.Name : "Null") + " is " + state
-            : (requirement ? requirement.Name : "Null") + " is NOT " + state;
+            ? (requirement ? requirement.name : "Null") + " is " + state
+            : (requirement ? requirement.name : "Null") + " is NOT " + state;
         
         public override string NegatedName => comparisonType == BooleanComparisonType.Is
             ? (requirement ? requirement.name : "Null") + " is NOT " + state
