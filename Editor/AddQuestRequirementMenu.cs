@@ -14,13 +14,13 @@ namespace IronMountain.Quests.Editor
         {
             QuestRequirementTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => type.IsSubclassOf(typeof(QuestRequirement)))
+                .Where(type => !type.IsAbstract && (type == typeof(QuestRequirement) || type.IsSubclassOf(typeof(QuestRequirement))))
                 .ToList();
         }
         
         public static void Open(Quest quest)
         {
-            if (QuestRequirementTypes.Count < 2)
+            if (QuestRequirementTypes.Count == 1)
             {
                 QuestRequirement requirement = ScriptableObject.CreateInstance<QuestRequirement>();
                 QuestRequirementsEditor.AddRequirementToQuest(requirement, quest);

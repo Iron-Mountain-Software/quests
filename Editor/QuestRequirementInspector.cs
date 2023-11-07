@@ -22,7 +22,7 @@ namespace IronMountain.Quests.Editor
         
         private void OnEnable()
         {
-            _questRequirement = (QuestRequirement) target;
+            if (target) _questRequirement = (QuestRequirement) target;
             _onTrackActionsEditor = new ScriptableActionsEditor("On Track", _questRequirement, _questRequirement.ActionsOnTrack);
             _completionConditionEditor = new ConditionEditor("To Complete", _questRequirement,
                 newCondition => _questRequirement.Condition = newCondition);

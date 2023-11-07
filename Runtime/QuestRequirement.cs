@@ -122,7 +122,7 @@ namespace IronMountain.Quests
 
         private List<QuestRequirement> ActiveDependencies => dependencies.FindAll(test => test && test.State != StateType.Completed);
 
-        protected virtual string Directory => Path.Combine("Quests", Quest.ID, ID);
+        protected virtual string Directory => Path.Combine("Quests", "Requirements", ID);
 
         protected virtual void OnEnable()
         {

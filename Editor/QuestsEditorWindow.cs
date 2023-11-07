@@ -88,9 +88,6 @@ namespace IronMountain.Quests.Editor
             _contentSection.y = 0;
             _contentSection.width = Current.position.width - _sidebarWidth;
             _contentSection.height = Current.position.height;
-            
-            //GUI.DrawTexture(_sidebarSection, Core.Editor.Textures.SidebarSectionTexture);
-            //GUI.DrawTexture(_contentSection, Core.Editor.Textures.BackgroundTexture);
         }
 
         private void SelectQuest(Quest quest)
@@ -109,7 +106,7 @@ namespace IronMountain.Quests.Editor
             }
             if (GUILayout.Button("Create New"))
             {
-                QuestsEditor.CreateNewQuest("New Quest");
+                AddQuestMenu.Open();
                 RefreshQuestsList();
             }
             
