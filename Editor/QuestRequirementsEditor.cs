@@ -18,21 +18,6 @@ namespace IronMountain.Quests.Editor
             Selection.activeObject = requirement;
             AssetDatabase.SaveAssets();
         }
-    
-        public static void AddRequirementToQuest<T>(Quest quest) where T : QuestRequirement
-        {
-            if (!quest) return;
-            QuestRequirement requirement = ScriptableObject.CreateInstance(typeof(T)) as QuestRequirement;
-            if (!requirement || string.IsNullOrEmpty(AssetDatabase.GetAssetPath(quest))) return;
-            quest.OnValidate();
-            AssetDatabase.AddObjectToAsset(requirement, quest);
-            quest.Requirements.Add(requirement);
-            requirement.Quest = quest;
-            requirement.OnValidate();
-            quest.OnValidate();
-            Selection.activeObject = requirement;
-            AssetDatabase.SaveAssets();
-        }
 
         public static void RemoveRequirementFromQuest(QuestRequirement requirement)
         {

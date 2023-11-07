@@ -162,11 +162,10 @@ namespace IronMountain.Quests.Editor
                         GUILayout.Label("Completed", _completed, GUILayout.MaxWidth(90));
                         break;
                 }
-                if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.MaxWidth(25)))
+                if (GUILayout.Button("Remove", GUILayout.MaxWidth(70)))
                 {
                     list.DeleteArrayElementAtIndex(i);
                     AssetDatabase.SaveAssets();
-                    return;
                 }
                 EditorGUILayout.EndHorizontal();
             }

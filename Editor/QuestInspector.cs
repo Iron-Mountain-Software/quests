@@ -16,6 +16,12 @@ namespace IronMountain.Quests.Editor
         private QuestRequirement _selectedQuestRequirement;
         private UnityEditor.Editor _cachedSelectedRequirementEditor;
 
+        private GUIStyle _header;
+        private GUIStyle _h1;
+        private GUIStyle _notTracking;
+        private GUIStyle _tracking;
+        private GUIStyle _completed;
+        
         private void OnEnable()
         {
             _quest = (Quest) target;
@@ -23,20 +29,73 @@ namespace IronMountain.Quests.Editor
                 newCondition => _quest.Prerequisites = newCondition);
             _onStartActionsEditor = new ScriptableActionsEditor("On Start", _quest, _quest.ActionsOnActivate);
             _onCompleteActionsEditor = new ScriptableActionsEditor("On Complete", _quest, _quest.ActionsOnComplete);
-        }
-
-        private void StartBox(string title)
-        {
-            GUILayout.Space(10);
-            //EditorGUILayout.BeginVertical(Core.Editor.Styles.Subbox, GUILayout.MinHeight(75));
-            //GUILayout.Label(title, Core.Editor.Styles.H3, GUILayout.ExpandWidth(true));
-            EditorGUI.indentLevel++;
-        }
-
-        private void EndBox()
-        {
-            EditorGUI.indentLevel--;
-            //EditorGUILayout.EndVertical();
+            
+                        Texture2D headerTexture = new Texture2D(1, 1);
+            headerTexture.SetPixel(0,0, new Color(0.12f, 0.12f, 0.12f));
+            headerTexture.Apply();
+            _header = new GUIStyle
+            {
+                padding = new RectOffset(5, 5, 5, 5),
+                normal = new GUIStyleState
+                {
+                    background = headerTexture
+                }
+            };
+            _h1 = new GUIStyle
+            {
+                fontSize = 16,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+                normal = new GUIStyleState
+                {
+                    textColor = new Color(0.36f, 0.36f, 0.36f)
+                }
+            };
+            
+            Texture2D notTrackingTexture = new Texture2D(1, 1);
+            notTrackingTexture.SetPixel(0,0, new Color(0.58f, 0.58f, 0.58f));
+            notTrackingTexture.Apply();
+            _notTracking = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(3, 3, 3, 3),
+                padding = new RectOffset(1, 1, 1, 1),
+                normal = new GUIStyleState
+                {
+                    background = notTrackingTexture,
+                    textColor = Color.white
+                }
+            };
+            
+            Texture2D trackingTexture = new Texture2D(1, 1);
+            trackingTexture.SetPixel(0,0, new Color(0.99f, 0.95f, 0.15f));
+            trackingTexture.Apply();
+            _tracking = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(3, 3, 3, 3),
+                padding = new RectOffset(1, 1, 1, 1),
+                normal = new GUIStyleState
+                {
+                    background = trackingTexture,
+                    textColor = new Color(0.18f, 0.18f, 0.18f)
+                }
+            };
+            
+            Texture2D completedTexture = new Texture2D(1, 1);
+            completedTexture.SetPixel(0,0, new Color(0f, 0.76f, 0.08f));
+            completedTexture.Apply();
+            _completed = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(3, 3, 3, 3),
+                padding = new RectOffset(1, 1, 1, 1),
+                normal = new GUIStyleState
+                {
+                    background = completedTexture,
+                    textColor = Color.white
+                }
+            };
         }
 
         public override void OnInspectorGUI()
@@ -59,15 +118,9 @@ namespace IronMountain.Quests.Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("priority"));
 
                 _prerequisitesEditor.Draw(ref _quest.prerequisites);
-
                 _onStartActionsEditor.Draw();
-
-                StartBox("Requirements");
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("requirements"));
-                EndBox();
-                
+                DrawRequirements();
                 _onCompleteActionsEditor.Draw();
-
                 DrawInheritedProperties();
                 
                 if (GUILayout.Button("Copy Quest Content", GUILayout.MinHeight(25)))
@@ -77,6 +130,55 @@ namespace IronMountain.Quests.Editor
 
                 serializedObject.ApplyModifiedProperties();
             }
+        }
+
+        private void DrawRequirements()
+        {
+            GUILayout.Space(10);
+            SerializedProperty list = serializedObject.FindProperty("requirements");
+
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Requirements", _h1, GUILayout.ExpandWidth(true));
+            if (GUILayout.Button("Add", GUILayout.MaxWidth(125)))
+                AddQuestRequirementMenu.Open(_quest);
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.BeginVertical();
+            for (int i = 0; i < list.arraySize; i++)
+            {
+                QuestRequirement requirement = (QuestRequirement) list.GetArrayElementAtIndex(i).objectReferenceValue;
+                if (!requirement) continue;
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label((i + 1) + ". " + requirement.name);
+                switch (requirement.State)
+                {
+                    case QuestRequirement.StateType.None:
+                        GUILayout.Label("Not Tracking", _notTracking, GUILayout.MaxWidth(90));
+                        break;
+                    case QuestRequirement.StateType.Tracking:
+                        GUILayout.Label("Tracking", _tracking, GUILayout.MaxWidth(90));
+                        break;
+                    case QuestRequirement.StateType.Completed:
+                        GUILayout.Label("Completed", _completed, GUILayout.MaxWidth(90));
+                        break;
+                }
+                if (GUILayout.Button("↑", GUILayout.MaxWidth(20)))
+                {
+                    list.MoveArrayElement(i, i - 1);
+                }
+                if (GUILayout.Button("↓", GUILayout.MaxWidth(20)))
+                {
+                    list.MoveArrayElement(i, i + 1);
+                }
+                if (GUILayout.Button("Delete", GUILayout.MaxWidth(70)))
+                {
+                    QuestRequirementsEditor.RemoveRequirementFromQuest(requirement);
+                    list.DeleteArrayElementAtIndex(i);
+                    AssetDatabase.SaveAssets();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
         }
 
         protected virtual void DrawInheritedProperties() { }
