@@ -199,13 +199,12 @@ namespace IronMountain.Quests
             switch (State)
             {
                 case StateType.None:
-                    if (!prerequisites || prerequisites.Evaluate()) Activate();
+                    if (!prerequisites || prerequisites.Evaluate())
+                        Activate();
                     break;
                 case StateType.Active:
                     foreach (QuestRequirement requirement in requirements)
-                    {
                         if (requirement) requirement.StartTracking();
-                    }
                     break;
                 case StateType.Completed:
                     break;
@@ -225,7 +224,8 @@ namespace IronMountain.Quests
             State = StateType.Active;
             foreach (ScriptableAction action in actionsOnActivate)
                 if (action) action.Invoke();
-            foreach (QuestRequirement requirement in Requirements) requirement.StartTracking();
+            foreach (QuestRequirement requirement in Requirements)
+                if (requirement) requirement.StartTracking();
             return true;
         }
         

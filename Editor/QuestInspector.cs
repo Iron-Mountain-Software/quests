@@ -67,12 +67,6 @@ namespace IronMountain.Quests.Editor
                 EndBox();
                 
                 _onCompleteActionsEditor.Draw();
-                
-                StartBox("Rewards");
-                //EditorGUILayout.PropertyField(serializedObject.FindProperty("rewardCoins"));
-                //EditorGUILayout.PropertyField(serializedObject.FindProperty("rewardXP"));
-                //EditorGUILayout.PropertyField(serializedObject.FindProperty("rewardItems"));
-                EndBox();
 
                 DrawInheritedProperties();
                 

@@ -216,6 +216,7 @@ namespace IronMountain.Quests
         {
             dependencies = dependencies.Distinct().ToList();
             dependencies.RemoveAll(dependency => !dependency || dependency.Quest != quest);
+            dependencies.Sort((a, b) => string.Compare(a.name, b.name, StringComparison.Ordinal));
         }
         
         [ContextMenu("Prune On Track Actions")]

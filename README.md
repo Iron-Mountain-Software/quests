@@ -1,5 +1,5 @@
 # Quests
-*Version: 1.0.2*
+*Version: 1.0.4*
 ## Description: 
 Scriptable Object Quests.
 ## Dependencies: 
