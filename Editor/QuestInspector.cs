@@ -205,7 +205,9 @@ namespace IronMountain.Quests.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Log & Copy Data", GUILayout.MinHeight(25)))
             {
-                //EditorGUIUtility.systemCopyBuffer = QuestPrinter.PrintQuest(_quest);
+                string documentation = _quest.WriteDocumentation();
+                Debug.Log(documentation);
+                EditorGUIUtility.systemCopyBuffer = documentation;
             }
             if (GUILayout.Button("Activate", GUILayout.MinHeight(25)) && _quest)
             {

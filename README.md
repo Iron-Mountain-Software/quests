@@ -1,5 +1,5 @@
 # Quests
-*Version: 1.0.7*
+*Version: 1.0.8*
 ## Description: 
 Scriptable Object Quests.
 ## Dependencies: 
@@ -47,6 +47,7 @@ Scriptable Object Quests.
       * public virtual Boolean ***Complete***()
       * public virtual void ***Reset***()
       * public virtual void ***OnValidate***()
+      * public virtual String ***WriteDocumentation***()
       * public virtual Boolean ***HasErrors***()
 1. public class **QuestRequirement** : ScriptableObject
    * Actions: 

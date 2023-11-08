@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using IronMountain.Conditions;
 using IronMountain.SaveSystem;
 using IronMountain.ScriptableActions;
@@ -323,7 +324,29 @@ namespace IronMountain.Quests
                 decimalPrefix++;
             }
         }
-        
+
+        public virtual string WriteDocumentation()
+        {
+            StringBuilder documentation = new StringBuilder();
+            documentation.AppendLine("QUEST:       " + name);
+            documentation.AppendLine("PRIORITY:    " + priority);
+            documentation.AppendLine("NAME:        " + Name);
+            documentation.AppendLine("DESCRIPTION: " + Description);
+            documentation.AppendLine("REQUIREMENTS:" + Description);
+            int index = 1;
+            foreach (QuestRequirement requirement in requirements)
+            {
+                if (!requirement) continue;
+                int display = index + 1;
+                documentation.AppendLine(index + ") " + requirement.Name);
+                documentation.AppendLine("  ┣━ " + requirement.Detail);
+                documentation.AppendLine("  ┗━ " + requirement.Tip);
+                index++;
+            }
+            documentation.AppendLine("CONCLUSION: " + Conclusion);
+            return documentation.ToString();
+        }
+
         public virtual bool HasErrors()
         {
             foreach (QuestRequirement questRequirement in Requirements)
