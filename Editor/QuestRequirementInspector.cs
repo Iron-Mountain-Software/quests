@@ -106,13 +106,9 @@ namespace IronMountain.Quests.Editor
             _onTrackActionsEditor.Draw();
             _completionConditionEditor.Draw(ref _questRequirement.condition);
             _onCompleteActionsEditor.Draw();
-            DrawInheritedProperties();
+            DrawOtherProperties();
+            DrawEditorActionButtons();
             serializedObject.ApplyModifiedProperties();
-            GUILayout.Space(5);
-            if (GUILayout.Button("Delete Requirement", GUILayout.MinHeight(25)))
-            {
-                QuestRequirementsEditor.RemoveRequirementFromQuest(_questRequirement);
-            }
         }
 
         private void DrawDependencies()
@@ -172,6 +168,42 @@ namespace IronMountain.Quests.Editor
             EditorGUILayout.EndVertical();
         }
 
-        protected virtual void DrawInheritedProperties() { }
+        protected virtual void DrawOtherProperties()
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Other", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            DrawPropertiesExcluding(serializedObject,
+                "m_Script",
+                "id",
+                "quest",
+                "detail",
+                "tip",
+                "depiction",
+                "dependencies",
+                "actionsOnTrack",
+                "actionsOnComplete",
+                "condition"
+            );
+        }
+        
+        protected virtual void DrawEditorActionButtons()
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Editor Actions", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Start Tracking", GUILayout.MinHeight(25)) && _questRequirement)
+            {
+                _questRequirement.StartTracking();
+            }
+            if (GUILayout.Button("Delete Requirement", GUILayout.MinHeight(25)))
+            {
+                QuestRequirementsEditor.RemoveRequirementFromQuest(_questRequirement);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }

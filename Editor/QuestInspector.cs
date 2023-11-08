@@ -116,18 +116,12 @@ namespace IronMountain.Quests.Editor
                 GUILayout.Space(10);
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("type"));
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("priority"));
-
                 _prerequisitesEditor.Draw(ref _quest.prerequisites);
                 _onStartActionsEditor.Draw();
                 DrawRequirements();
                 _onCompleteActionsEditor.Draw();
-                DrawInheritedProperties();
-                
-                if (GUILayout.Button("Copy Quest Content", GUILayout.MinHeight(25)))
-                {
-                    //EditorGUIUtility.systemCopyBuffer = QuestPrinter.PrintQuest(_quest);
-                }
-
+                DrawOtherProperties();
+                DrawEditorActionButtons();
                 serializedObject.ApplyModifiedProperties();
             }
         }
@@ -181,6 +175,47 @@ namespace IronMountain.Quests.Editor
             EditorGUILayout.EndVertical();
         }
 
-        protected virtual void DrawInheritedProperties() { }
+        protected virtual void DrawOtherProperties()
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Other", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            DrawPropertiesExcluding(serializedObject,
+                "m_Script",
+                "id",
+                "localizedName",
+                "description",
+                "conclusion",
+                "type",
+                "priority",
+                "prerequisites",
+                "actionsOnActivate",
+                "actionsOnComplete",
+                "requirements"
+                );
+        }
+        
+        protected virtual void DrawEditorActionButtons()
+        {
+            GUILayout.Space(10);
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Editor Actions", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Log & Copy Data", GUILayout.MinHeight(25)))
+            {
+                //EditorGUIUtility.systemCopyBuffer = QuestPrinter.PrintQuest(_quest);
+            }
+            if (GUILayout.Button("Activate", GUILayout.MinHeight(25)) && _quest)
+            {
+                _quest.Activate();
+            }
+            if (GUILayout.Button("Complete", GUILayout.MinHeight(25)) && _quest)
+            {
+                _quest.Complete();
+            }
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }
