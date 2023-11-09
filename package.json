@@ -1,6 +1,6 @@
 {
   "name": "com.iron-mountain.quests",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "displayName": "Quests",
   "author": "Chris Monteferrante <ludachrismonte@gmail.com>",
   "unity": "2019.1",
@@ -16,7 +16,9 @@
     "url": "git+https://github.com/Iron-Mountain-Software/quests.git"
   },
   "description": "Scriptable Object Quests.",
-  "useCases": [],
+  "useCases": [
+    "For creating scripted sequences of game events."
+  ],
   "directions": null,
   "keywords": [
     "tools"
