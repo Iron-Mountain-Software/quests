@@ -1,14 +1,14 @@
 # Quests
-*Version: 1.1.0*
+*Version: 1.2.0*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
 * For creating scripted sequences of game events.
 ## Dependencies: 
 * com.unity.localization (1.3.2)
-* com.iron-mountain.conditions (1.2.4)
-* com.iron-mountain.scriptable-actions (1.0.4)
-* com.iron-mountain.save-system (1.0.2)
+* com.iron-mountain.conditions (1.3.0)
+* com.iron-mountain.scriptable-actions (1.0.5)
+* com.iron-mountain.save-system (1.0.4)
 ## Package Mirrors: 
 [<img src='https://img.itch.zone/aW1nLzEzNzQ2ODk4LnBuZw==/original/Rv4m96.png'>](https://iron-mountain.itch.io/quests)[<img src='https://img.itch.zone/aW1nLzEzNzQ2ODg3LnBuZw==/original/npRUfq.png'>](https://github.com/Iron-Mountain-Software/quests.git)[<img src='https://img.itch.zone/aW1nLzEzNzQ2ODkyLnBuZw==/original/Fq0ORM.png'>](https://www.npmjs.com/package/com.iron-mountain.quests)
 ---

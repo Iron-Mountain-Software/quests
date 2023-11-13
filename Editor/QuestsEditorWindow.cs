@@ -100,10 +100,12 @@ namespace IronMountain.Quests.Editor
         private void DrawSidebar()
         {
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+            
             if (GUILayout.Button("Refresh"))
             {
                 RefreshQuestsList();
             }
+            
             if (GUILayout.Button("Create New"))
             {
                 AddQuestMenu.Open();
