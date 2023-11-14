@@ -13,8 +13,6 @@ namespace IronMountain.Quests.Editor
         private ConditionEditor _prerequisitesEditor;
         private ScriptableActionsEditor _onStartActionsEditor;
         private ScriptableActionsEditor _onCompleteActionsEditor;
-        private QuestRequirement _selectedQuestRequirement;
-        private UnityEditor.Editor _cachedSelectedRequirementEditor;
 
         private GUIStyle _header;
         private GUIStyle _h1;
@@ -100,25 +98,14 @@ namespace IronMountain.Quests.Editor
 
         public override void OnInspectorGUI()
         {
-            _selectedQuestRequirement = QuestInspectorHeader.Draw(_quest, _selectedQuestRequirement);
-            GUILayout.Space(10);
-
-            if (_selectedQuestRequirement)
-            {
-                CreateCachedEditor(_selectedQuestRequirement, null, ref _cachedSelectedRequirementEditor);
-                _cachedSelectedRequirementEditor.OnInspectorGUI();
-            }
-            else
-            {
-                DrawDescriptions();
-                _prerequisitesEditor.Draw(ref _quest.prerequisites);
-                _onStartActionsEditor.Draw();
-                DrawRequirements();
-                _onCompleteActionsEditor.Draw();
-                DrawOtherProperties();
-                DrawEditorActionButtons();
-                serializedObject.ApplyModifiedProperties();
-            }
+            DrawDescriptions();
+            _prerequisitesEditor.Draw(ref _quest.prerequisites);
+            _onStartActionsEditor.Draw();
+            DrawRequirements();
+            _onCompleteActionsEditor.Draw();
+            DrawOtherProperties();
+            DrawEditorActionButtons();
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DrawDescriptions()

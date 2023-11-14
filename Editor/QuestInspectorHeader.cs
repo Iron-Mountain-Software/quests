@@ -14,6 +14,7 @@ namespace IronMountain.Quests.Editor
             {
                 Selection.activeObject = quest;
                 newSelectedRequirement = null;
+                GUI.FocusControl(null);
             }
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.BeginHorizontal();
@@ -27,6 +28,7 @@ namespace IronMountain.Quests.Editor
                     {
                         Selection.activeObject = requirement;
                         newSelectedRequirement = requirement;
+                        GUI.FocusControl(null);
                     }
                     EditorGUI.EndDisabledGroup();
                 }

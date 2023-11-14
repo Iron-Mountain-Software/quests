@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace IronMountain.Quests.Editor
 {
@@ -29,13 +31,32 @@ namespace IronMountain.Quests.Editor
         [Header("Cache")]
         private readonly List<Quest> _quests = new();
         private Quest _selectedQuest;
+        private QuestRequirement _selectedQuestRequirement;
         private UnityEditor.Editor _cachedEditor;
         
-        public static void Open(Quest selectedQuest = null)
+        [OnOpenAsset(-1)]
+        public static bool Open(int instanceID, int line)
+        {
+            Object asset = EditorUtility.InstanceIDToObject(instanceID);
+            if (asset is Quest quest)
+            {
+                Open(quest);
+                return true;
+            }
+            if (asset is QuestRequirement questRequirement)
+            {
+                Open(questRequirement.Quest, questRequirement);
+                return true;
+            }
+            return false;
+        }
+        
+        public static void Open(Quest selectedQuest = null, QuestRequirement selectedQuestRequirement = null)
         {
             Current = GetWindow<QuestsEditorWindow>("Quests", true);
             Current.minSize = new Vector2(700, 700);
             Current._selectedQuest = selectedQuest;
+            Current._selectedQuestRequirement = selectedQuestRequirement;
             Current.RefreshQuestsList();
         }
 
@@ -57,6 +78,7 @@ namespace IronMountain.Quests.Editor
             Current = this;
             DrawLayouts();
             
+            
             GUILayout.BeginArea(_sidebarSection);
             DrawSidebar();
             GUILayout.EndArea();
@@ -64,8 +86,13 @@ namespace IronMountain.Quests.Editor
             GUILayout.BeginArea(_contentSection);
             if (_selectedQuest)
             {
+                _selectedQuestRequirement = QuestInspectorHeader.Draw(_selectedQuest, _selectedQuestRequirement);
                 _contentScroll = GUILayout.BeginScrollView(_contentScroll);
-                UnityEditor.Editor.CreateCachedEditor(_selectedQuest, null, ref _cachedEditor);
+                if (_selectedQuestRequirement)
+                {
+                    UnityEditor.Editor.CreateCachedEditor(_selectedQuestRequirement, null, ref _cachedEditor);
+                }
+                else UnityEditor.Editor.CreateCachedEditor(_selectedQuest, null, ref _cachedEditor);
                 _cachedEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }

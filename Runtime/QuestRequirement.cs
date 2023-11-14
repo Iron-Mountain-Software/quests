@@ -58,10 +58,12 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return detail.IsEmpty ? defaultDetail : detail.GetLocalizedString();
+                    return detail == null || detail.IsEmpty 
+                        ? defaultDetail 
+                        : detail.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference)) return defaultDetail;
+                if (detail == null || detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference)) return defaultDetail;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(detail.TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(detail.TableEntryReference);
