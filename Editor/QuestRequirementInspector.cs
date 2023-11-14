@@ -98,10 +98,7 @@ namespace IronMountain.Quests.Editor
         
         public override void OnInspectorGUI()
         {
-            GUILayout.Space(10);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("detail"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("tip"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("depiction"));
+            DrawDescriptions();
             DrawDependencies();
             _onTrackActionsEditor.Draw();
             _completionConditionEditor.Draw(ref _questRequirement.condition);
@@ -109,6 +106,22 @@ namespace IronMountain.Quests.Editor
             DrawOtherProperties();
             DrawEditorActionButtons();
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private void DrawDescriptions()
+        {
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Descriptions", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultDetail"), new GUIContent("Detail"));
+            EditorGUI.indentLevel += 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("detail"), GUIContent.none);
+            EditorGUI.indentLevel -= 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultTip"), new GUIContent("Tip"));
+            EditorGUI.indentLevel += 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("tip"), GUIContent.none);
+            EditorGUI.indentLevel -= 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("depiction"));
         }
 
         private void DrawDependencies()
@@ -178,7 +191,9 @@ namespace IronMountain.Quests.Editor
                 "m_Script",
                 "id",
                 "quest",
+                "defaultDetail",
                 "detail",
+                "defaultTip",
                 "tip",
                 "depiction",
                 "dependencies",

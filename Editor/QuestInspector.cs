@@ -110,12 +110,7 @@ namespace IronMountain.Quests.Editor
             }
             else
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("localizedName"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("conclusion"));
-                GUILayout.Space(10);
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("type"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("priority"));
+                DrawDescriptions();
                 _prerequisitesEditor.Draw(ref _quest.prerequisites);
                 _onStartActionsEditor.Draw();
                 DrawRequirements();
@@ -124,6 +119,27 @@ namespace IronMountain.Quests.Editor
                 DrawEditorActionButtons();
                 serializedObject.ApplyModifiedProperties();
             }
+        }
+
+        private void DrawDescriptions()
+        {
+            EditorGUILayout.BeginHorizontal(_header,GUILayout.ExpandWidth(true));
+            GUILayout.Label("Descriptions", _h1, GUILayout.ExpandWidth(true));
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultName"), new GUIContent("Name"));
+            EditorGUI.indentLevel += 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("localizedName"), GUIContent.none);
+            EditorGUI.indentLevel -= 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultDescription"), new GUIContent("Description"));
+            EditorGUI.indentLevel += 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("description"), GUIContent.none);
+            EditorGUI.indentLevel -= 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultConclusion"), new GUIContent("Conclusion"));
+            EditorGUI.indentLevel += 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("conclusion"), GUIContent.none);
+            EditorGUI.indentLevel -= 2;
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("type"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("priority"));
         }
 
         private void DrawRequirements()
@@ -143,7 +159,7 @@ namespace IronMountain.Quests.Editor
                 QuestRequirement requirement = (QuestRequirement) list.GetArrayElementAtIndex(i).objectReferenceValue;
                 if (!requirement) continue;
                 EditorGUILayout.BeginHorizontal();
-                GUILayout.Label((i + 1) + ". " + requirement.name);
+                GUILayout.Label((i + 1) + ". " + requirement.Detail);
                 switch (requirement.State)
                 {
                     case QuestRequirement.StateType.None:
@@ -184,8 +200,11 @@ namespace IronMountain.Quests.Editor
             DrawPropertiesExcluding(serializedObject,
                 "m_Script",
                 "id",
+                "defaultName",
                 "localizedName",
+                "defaultDescription",
                 "description",
+                "defaultConclusion",
                 "conclusion",
                 "type",
                 "priority",

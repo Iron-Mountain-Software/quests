@@ -36,8 +36,11 @@ namespace IronMountain.Quests
         public event Action OnViewsChanged;
         
         [SerializeField] private string id;
+        [SerializeField] private string defaultName;
         [SerializeField] private LocalizedString localizedName;
+        [SerializeField] private string defaultDescription;
         [SerializeField] private LocalizedString description;
+        [SerializeField] private string defaultConclusion;
         [SerializeField] private LocalizedString conclusion;
 
         [SerializeField] private StoryType type;
@@ -81,17 +84,17 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return localizedName.IsEmpty ? string.Empty : localizedName.GetLocalizedString();
+                    return localizedName.IsEmpty ? defaultName : localizedName.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (localizedName.IsEmpty || string.IsNullOrEmpty(localizedName.TableReference)) return string.Empty;
+                if (localizedName.IsEmpty || string.IsNullOrEmpty(localizedName.TableReference)) return defaultName;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(localizedName
                         .TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(localizedName.TableEntryReference);
-                return entry != null ? entry.Key : string.Empty;
+                return entry != null ? entry.Key : defaultName;
 #else
-				return string.Empty;
+				return defaultName;
 #endif
             }
         }
@@ -102,17 +105,17 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return description.IsEmpty ? string.Empty : description.GetLocalizedString();
+                    return description.IsEmpty ? defaultDescription : description.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (description.IsEmpty || string.IsNullOrEmpty(description.TableReference)) return string.Empty;
+                if (description.IsEmpty || string.IsNullOrEmpty(description.TableReference)) return defaultDescription;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(description
                         .TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(description.TableEntryReference);
-                return entry != null ? entry.Key : string.Empty;
+                return entry != null ? entry.Key : defaultDescription;
 #else
-				return string.Empty;
+				return defaultDescription;
 #endif
             }
         }
@@ -123,17 +126,17 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return conclusion.IsEmpty ? string.Empty : conclusion.GetLocalizedString();
+                    return conclusion.IsEmpty ? defaultConclusion : conclusion.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (conclusion.IsEmpty || string.IsNullOrEmpty(conclusion.TableReference)) return string.Empty;
+                if (conclusion.IsEmpty || string.IsNullOrEmpty(conclusion.TableReference)) return defaultConclusion;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(conclusion
                         .TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(conclusion.TableEntryReference);
-                return entry != null ? entry.Key : string.Empty;
+                return entry != null ? entry.Key : defaultConclusion;
 #else
-				return string.Empty;
+				return defaultConclusion;
 #endif
             }
         }
@@ -284,7 +287,7 @@ namespace IronMountain.Quests
                 bool noCondition = !requirement.Condition;
                 bool noActions = requirement.ActionsOnTrack.Count == 0
                                   && requirement.ActionsOnComplete.Count == 0;
-                requirement.name = prefix + (noCondition && noActions ? ".0 ─ " : ".0 ┬ ") + "Requirement " + prefix;
+                requirement.name = prefix + (noCondition && noActions ? ".0 ─ " : ".0 ┬ ") + requirement.Detail;
                 decimalPrefix = 1;
                 if (requirement.Condition)
                 {

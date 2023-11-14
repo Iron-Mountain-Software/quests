@@ -36,7 +36,9 @@ namespace IronMountain.Quests
         public event Action OnStateChanged;
         
         [SerializeField] private Quest quest;
+        [SerializeField] private string defaultDetail;
         [SerializeField] private LocalizedString detail;
+        [SerializeField] private string defaultTip;
         [SerializeField] private LocalizedString tip;
         [SerializeField] private List<QuestRequirement> dependencies = new ();
         [SerializeField] private List<ScriptableAction> actionsOnTrack = new ();
@@ -56,16 +58,16 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return detail.IsEmpty ? string.Empty : detail.GetLocalizedString();
+                    return detail.IsEmpty ? defaultDetail : detail.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference)) return string.Empty;
+                if (detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference)) return defaultDetail;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(detail.TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(detail.TableEntryReference);
-                return entry != null ? entry.Key : string.Empty;
+                return entry != null ? entry.Key : defaultDetail;
 #else
-				return string.Empty;
+				return defaultDetail;
 #endif
             }
         }
@@ -76,16 +78,16 @@ namespace IronMountain.Quests
             {
                 if (Application.isPlaying)
                 {
-                    return tip.IsEmpty ? string.Empty : tip.GetLocalizedString();
+                    return tip.IsEmpty ? defaultTip : tip.GetLocalizedString();
                 }
 #if UNITY_EDITOR
-                if (tip.IsEmpty || string.IsNullOrEmpty(tip.TableReference)) return string.Empty;
+                if (tip.IsEmpty || string.IsNullOrEmpty(tip.TableReference)) return defaultTip;
                 var collection =
                     UnityEditor.Localization.LocalizationEditorSettings.GetStringTableCollection(tip.TableReference);
                 var entry = collection.SharedData.GetEntryFromReference(tip.TableEntryReference);
-                return entry != null ? entry.Key : string.Empty;
+                return entry != null ? entry.Key : defaultTip;
 #else
-				return string.Empty;
+				return defaultTip;
 #endif
             }
         }
