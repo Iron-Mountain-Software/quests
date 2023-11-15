@@ -277,7 +277,7 @@ namespace IronMountain.Quests
             int integerPrefix = 0, decimalPrefix = 0;
             if (prerequisites)
             {
-                prerequisites.name = "0.0 ─ Prerequisites - " + prerequisites.DefaultName;
+                prerequisites.name = "0.0 ─ Prerequisites - " + prerequisites;
             }
             for (int i = 0; i < Requirements.Count; i++)
             {
@@ -292,7 +292,7 @@ namespace IronMountain.Quests
                 if (requirement.Condition)
                 {
                     decimalPrefix++;
-                    requirement.Condition.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Condition - " + requirement.Condition.DefaultName;
+                    requirement.Condition.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Condition - " + requirement.Condition;
                 }
                 for (int onTrackIndex = 0; onTrackIndex < requirement.ActionsOnTrack.Count; onTrackIndex++)
                 {

@@ -29,7 +29,7 @@ namespace IronMountain.Quests
             set => id = value;
         }
 
-        public virtual string Name => condition ? condition.DefaultName : "NULL";
+        public virtual string Name => condition ? condition.ToString() : "NULL";
     
         public static event Action<QuestRequirement> OnAnyStateChanged;
         

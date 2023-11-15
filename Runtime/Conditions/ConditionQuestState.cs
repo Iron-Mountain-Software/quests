@@ -24,16 +24,12 @@ namespace IronMountain.Quests.Conditions
 
         public override bool Evaluate() => quest && EvaluationUtilities.Compare((int) quest.State, (int) state, comparisonType);
         
-        public override string DefaultName => comparisonType == BooleanComparisonType.Is
-            ? (quest ? quest.name : "Null") + " is " + state
-            : (quest ? quest.name : "Null") + " is NOT " + state;
-        
-        public override string NegatedName => comparisonType == BooleanComparisonType.Is
-            ? (quest ? quest.name : "Null") + " is NOT " + state
-            : (quest ? quest.name : "Null") + " is " + state;
-        
         public override Sprite Depiction => null;
         
         public override bool HasErrors() => !quest;
+
+        public override string ToString() => comparisonType == BooleanComparisonType.Is
+            ? (quest ? quest.name : "Null") + " is " + state
+            : (quest ? quest.name : "Null") + " is NOT " + state;
     }
 }
