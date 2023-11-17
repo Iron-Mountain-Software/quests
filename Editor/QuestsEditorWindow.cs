@@ -78,7 +78,6 @@ namespace IronMountain.Quests.Editor
             Current = this;
             DrawLayouts();
             
-            
             GUILayout.BeginArea(_sidebarSection);
             DrawSidebar();
             GUILayout.EndArea();
@@ -122,6 +121,7 @@ namespace IronMountain.Quests.Editor
             Selection.activeObject = quest;
             GUI.FocusControl(null);
             _selectedQuest = quest;
+            _selectedQuestRequirement = null;
         }
         
         private void DrawSidebar()
@@ -161,6 +161,7 @@ namespace IronMountain.Quests.Editor
 
                 EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(_sidebarWidth - 20));
                 string questName = quest.name.Trim(' ', '_');
+                EditorGUI.BeginDisabledGroup(quest == _selectedQuest);
                 if (GUILayout.Button(" " + quest.Priority + ". " + questName, GUILayout.MaxHeight(25)))
                     SelectQuest(quest);
                 GUILayout.Label(quest.HasErrors()
@@ -168,6 +169,7 @@ namespace IronMountain.Quests.Editor
                         : new GUIContent(EditorGUIUtility.IconContent("TestPassed")), 
                     GUILayout.MaxWidth(15), GUILayout.MaxHeight(25));
                 EditorGUILayout.EndHorizontal();
+                EditorGUI.EndDisabledGroup();
             }
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();

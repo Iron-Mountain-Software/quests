@@ -213,6 +213,10 @@ namespace IronMountain.Quests
             PruneDependencies();
             PruneOnTrackActions();
             PruneOnCompleteActions();
+            if (quest && EditorUtility.IsDirty(this))
+            {
+                EditorUtility.SetDirty(quest);
+            }
         }
 
         [ContextMenu("Prune Dependencies")]
@@ -244,14 +248,23 @@ namespace IronMountain.Quests
         {
             EditorGUIUtility.systemCopyBuffer = Name; 
         }
+        
+        public bool DescriptionHasErrors =>
+            string.IsNullOrWhiteSpace(defaultDetail) &&
+            (detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference))
+            || string.IsNullOrWhiteSpace(defaultTip) &&
+            (tip.IsEmpty || string.IsNullOrEmpty(tip.TableReference));
 
+        public bool DependenciesHaveErrors => dependencies.Contains(null);
+
+        public bool CompletionConditionHasErrors => !condition || condition.HasErrors();
+        
         public virtual bool HasErrors()
         {
             return string.IsNullOrWhiteSpace(ID)
-                   || detail.IsEmpty || string.IsNullOrEmpty(detail.TableReference)
-                   || tip.IsEmpty || string.IsNullOrEmpty(tip.TableReference)
-                   || dependencies.Contains(null)
-                   || !condition;
+                   || DescriptionHasErrors
+                   || DependenciesHaveErrors
+                   || CompletionConditionHasErrors;
         }
 
 #endif

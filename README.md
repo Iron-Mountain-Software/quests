@@ -1,12 +1,12 @@
 # Quests
-*Version: 1.4.0*
+*Version: 1.5.1*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
 * For creating scripted sequences of game events.
 ## Dependencies: 
 * com.unity.localization (1.3.2)
-* com.iron-mountain.conditions (1.4.0)
+* com.iron-mountain.conditions (1.5.0)
 * com.iron-mountain.scriptable-actions (1.0.5)
 * com.iron-mountain.save-system (1.0.4)
 ## Package Mirrors: 
@@ -33,6 +33,7 @@ Scriptable Object Quests.
       * public Int32 ***Priority***  { get; }
       * public StoryType ***Type***  { get; }
       * public Condition ***Prerequisites***  { get; set; }
+      * public Boolean ***PrerequisitesSatisfied***  { get; }
       * public List<ScriptableAction> ***ActionsOnActivate***  { get; }
       * public List<ScriptableAction> ***ActionsOnComplete***  { get; }
       * public List<QuestRequirement> ***Requirements***  { get; }
@@ -43,6 +44,9 @@ Scriptable Object Quests.
       * public String ***Conclusion***  { get; }
       * public StateType ***State***  { get; }
       * public Int32 ***Views***  { get; set; }
+      * public Boolean ***DescriptionHasErrors***  { get; }
+      * public Boolean ***PrerequisitesHaveErrors***  { get; }
+      * public Boolean ***RequirementsHaveErrors***  { get; }
    * Methods: 
       * public void ***Refresh***()
       * public virtual Boolean ***Activate***()
@@ -66,6 +70,9 @@ Scriptable Object Quests.
       * public Condition ***Condition***  { get; set; }
       * public Sprite ***Depiction***  { get; }
       * public StateType ***State***  { get; set; }
+      * public Boolean ***DescriptionHasErrors***  { get; }
+      * public Boolean ***DependenciesHaveErrors***  { get; }
+      * public Boolean ***CompletionConditionHasErrors***  { get; }
    * Methods: 
       * public void ***StartTracking***()
       * public virtual void ***Reset***()
@@ -75,17 +82,15 @@ Scriptable Object Quests.
 ### Conditions
 1. public class **ConditionQuestRequirementState** : Condition
    * Properties: 
-      * public String ***DefaultName***  { get; }
-      * public String ***NegatedName***  { get; }
       * public Sprite ***Depiction***  { get; }
    * Methods: 
       * public override Boolean ***Evaluate***()
       * public override Boolean ***HasErrors***()
+      * public override String ***ToString***()
 1. public class **ConditionQuestState** : Condition
    * Properties: 
-      * public String ***DefaultName***  { get; }
-      * public String ***NegatedName***  { get; }
       * public Sprite ***Depiction***  { get; }
    * Methods: 
       * public override Boolean ***Evaluate***()
       * public override Boolean ***HasErrors***()
+      * public override String ***ToString***()

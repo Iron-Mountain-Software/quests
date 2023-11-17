@@ -70,6 +70,8 @@ namespace IronMountain.Quests
             set => prerequisites = value;
         }
 
+        public bool PrerequisitesSatisfied => !prerequisites || prerequisites.Evaluate();
+
         public List<ScriptableAction> ActionsOnActivate => actionsOnActivate;
         public List<ScriptableAction> ActionsOnComplete => actionsOnComplete;
         public List<QuestRequirement> Requirements => requirements;
@@ -203,7 +205,7 @@ namespace IronMountain.Quests
             switch (State)
             {
                 case StateType.None:
-                    if (!prerequisites || prerequisites.Evaluate())
+                    if (PrerequisitesSatisfied)
                         Activate();
                     break;
                 case StateType.Active:
@@ -217,8 +219,7 @@ namespace IronMountain.Quests
 
         private void OnPrerequisitesStateChanged()
         {
-            if (State != StateType.None) return;
-            if (!prerequisites || prerequisites.Evaluate()) Activate();
+            if (State == StateType.None && PrerequisitesSatisfied) Activate();
         }
         
         [ContextMenu("Activate", false, 0)]
@@ -350,19 +351,33 @@ namespace IronMountain.Quests
             return documentation.ToString();
         }
 
-        public virtual bool HasErrors()
-        {
-            foreach (QuestRequirement questRequirement in Requirements)
-            {
-                if (!questRequirement) return true;
-                if (questRequirement.HasErrors()) return true;
-            }
+        public bool DescriptionHasErrors =>
+            string.IsNullOrWhiteSpace(defaultName) &&
+            (localizedName.IsEmpty || string.IsNullOrEmpty(localizedName.TableReference))
+            || string.IsNullOrWhiteSpace(defaultDescription) &&
+            (description.IsEmpty || string.IsNullOrEmpty(description.TableReference))
+            || string.IsNullOrWhiteSpace(defaultConclusion) &&
+            (conclusion.IsEmpty || string.IsNullOrEmpty(conclusion.TableReference));
 
-            return string.IsNullOrWhiteSpace(ID)
-                   || localizedName.IsEmpty || string.IsNullOrEmpty(localizedName.TableReference)
-                   || description.IsEmpty || string.IsNullOrEmpty(description.TableReference)
-                   || conclusion.IsEmpty || string.IsNullOrEmpty(conclusion.TableReference);
+        public bool PrerequisitesHaveErrors => prerequisites && prerequisites.HasErrors();
+
+        public bool RequirementsHaveErrors
+        {
+            get
+            {
+                foreach (QuestRequirement questRequirement in Requirements)
+                {
+                    if (!questRequirement || questRequirement.HasErrors()) return true;
+                }
+                return false;
+            }
         }
+
+        public virtual bool HasErrors() =>
+            string.IsNullOrWhiteSpace(ID)
+            || DescriptionHasErrors
+            || PrerequisitesHaveErrors
+            || RequirementsHaveErrors;
 
 #endif
     }
