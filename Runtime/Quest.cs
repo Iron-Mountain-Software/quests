@@ -205,8 +205,7 @@ namespace IronMountain.Quests
             switch (State)
             {
                 case StateType.None:
-                    if (PrerequisitesSatisfied)
-                        Activate();
+                    if (PrerequisitesSatisfied) Activate();
                     break;
                 case StateType.Active:
                     foreach (QuestRequirement requirement in requirements)
@@ -225,7 +224,7 @@ namespace IronMountain.Quests
         [ContextMenu("Activate", false, 0)]
         public virtual bool Activate()
         {
-            if (State != StateType.None) return false;
+            if (State == StateType.Completed) return false;
             State = StateType.Active;
             foreach (ScriptableAction action in actionsOnActivate)
                 if (action) action.Invoke();

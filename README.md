@@ -1,5 +1,5 @@
 # Quests
-*Version: 1.5.1*
+*Version: 1.5.2*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 

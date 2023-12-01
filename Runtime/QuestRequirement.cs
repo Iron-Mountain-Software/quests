@@ -171,12 +171,9 @@ namespace IronMountain.Quests
         {
             if (condition) condition.OnConditionStateChanged -= OnConditionStateChanged;
             if (ActiveDependencies.Count > 0 || State == StateType.Completed) return;
-            if (State != StateType.Tracking)
-            {
-                State = StateType.Tracking;
-                foreach (ScriptableAction action in actionsOnTrack)
-                    if (action) action.Invoke();
-            }
+            State = StateType.Tracking;
+            foreach (ScriptableAction action in actionsOnTrack)
+                if (action) action.Invoke();
             if (condition)
             {
                 if (condition.Evaluate()) Complete();
