@@ -12,7 +12,7 @@ namespace IronMountain.Quests.Editor.Conditions
         {
             GUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("quest"), GUIContent.none);
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("comparisonType"), GUIContent.none, GUILayout.MaxWidth(60));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("comparisonType"), GUIContent.none, GUILayout.MaxWidth(38));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("state"), GUIContent.none, GUILayout.MaxWidth(90));
             GUILayout.EndHorizontal();
         }

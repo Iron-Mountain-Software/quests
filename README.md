@@ -1,12 +1,12 @@
 # Quests
-*Version: 1.5.3*
+*Version: 1.5.4*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
 * For creating scripted sequences of game events.
 ## Dependencies: 
 * com.unity.localization (1.3.2)
-* com.iron-mountain.conditions (1.5.0)
+* com.iron-mountain.conditions (1.5.6)
 * com.iron-mountain.scriptable-actions (1.0.5)
 * com.iron-mountain.save-system (1.0.4)
 ## Package Mirrors: 

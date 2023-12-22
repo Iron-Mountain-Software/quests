@@ -32,7 +32,7 @@ namespace IronMountain.Quests.Editor
             DrawDependencies();
             _onTrackActionsEditor.Draw();
             _completionConditionEditor.Draw(ref _questRequirement.condition);
-            _failConditionEditor.Draw(ref _questRequirement.condition);
+            _failConditionEditor.Draw(ref _questRequirement.failCondition);
             _onCompleteActionsEditor.Draw();
             DrawOtherProperties();
             DrawEditorActionButtons();
