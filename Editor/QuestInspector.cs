@@ -10,7 +10,7 @@ namespace IronMountain.Quests.Editor
     {
         private Quest _quest;
         private ConditionEditor _prerequisitesEditor;
-        private ScriptableActionsEditor _onStartActionsEditor;
+        private ScriptableActionsEditor _onActivateActionsEditor;
         private ScriptableActionsEditor _onCompleteActionsEditor;
 
         protected override void OnEnable()
@@ -19,17 +19,20 @@ namespace IronMountain.Quests.Editor
             _quest = (Quest) target;
             _prerequisitesEditor = new ConditionEditor("Prerequisites", _quest,
                 newCondition => _quest.Prerequisites = newCondition);
-            _onStartActionsEditor = new ScriptableActionsEditor("On Start", _quest, _quest.ActionsOnActivate);
-            _onCompleteActionsEditor = new ScriptableActionsEditor("On Complete", _quest, _quest.ActionsOnComplete);
+            _onActivateActionsEditor = new ScriptableActionsEditor("On Activation", _quest, _quest.ActionsOnActivate);
+            _onCompleteActionsEditor = new ScriptableActionsEditor("On Completion", _quest, _quest.ActionsOnComplete);
         }
 
         public override void OnInspectorGUI()
         {
             DrawDescriptions();
+            
             _prerequisitesEditor.Draw(ref _quest.prerequisites);
-            _onStartActionsEditor.Draw();
             DrawRequirements();
+            
+            _onActivateActionsEditor.Draw();
             _onCompleteActionsEditor.Draw();
+            
             DrawOtherProperties();
             DrawEditorActionButtons();
             serializedObject.ApplyModifiedProperties();
@@ -92,6 +95,9 @@ namespace IronMountain.Quests.Editor
                         break;
                     case QuestRequirement.StateType.Completed:
                         GUILayout.Label("Completed", Completed, GUILayout.MaxWidth(90));
+                        break;
+                    case QuestRequirement.StateType.Failed:
+                        GUILayout.Label("Failed", Completed, GUILayout.MaxWidth(90));
                         break;
                 }
                 if (GUILayout.Button("↑", GUILayout.MaxWidth(20)))

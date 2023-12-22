@@ -18,7 +18,8 @@ namespace IronMountain.Quests
         {
             None = 0,
             Tracking = 1,
-            Completed = 2
+            Completed = 2,
+            Failed = 3
         }
         
         [SerializeField] private string id;
@@ -44,6 +45,7 @@ namespace IronMountain.Quests
         [SerializeField] private List<ScriptableAction> actionsOnTrack = new ();
         [SerializeField] private List<ScriptableAction> actionsOnComplete = new ();
         [SerializeField] public Condition condition;
+        [SerializeField] public Condition failCondition;
         [SerializeField] private Sprite depiction;
         
         public Quest Quest
@@ -103,6 +105,12 @@ namespace IronMountain.Quests
             set => condition = value;
         }
         
+        public Condition FailCondition
+        {
+            get => failCondition;
+            set => failCondition = value;
+        }
+        
         public Sprite Depiction
         {
             get 
@@ -140,7 +148,6 @@ namespace IronMountain.Quests
 
         protected virtual void OnDisable()
         {
-
             foreach (QuestRequirement dependency in dependencies)
             {
                 if (dependency) dependency.OnStateChanged -= StartTracking;
@@ -162,33 +169,51 @@ namespace IronMountain.Quests
             OnAnyStateChanged?.Invoke(this);
         }
 
-        private void OnConditionStateChanged()
-        {
-            if (condition.Evaluate()) Complete();
-        }
-
         public void StartTracking()
         {
-            if (condition) condition.OnConditionStateChanged -= OnConditionStateChanged;
-            if (ActiveDependencies.Count > 0 || State == StateType.Completed) return;
+            if (condition) condition.OnConditionStateChanged -= OnCompletionConditionStateChanged;
+            if (failCondition) failCondition.OnConditionStateChanged -= OnFailConditionStateChanged;
+            if (ActiveDependencies.Count > 0 || State is StateType.Completed or StateType.Failed) return;
             State = StateType.Tracking;
             foreach (ScriptableAction action in actionsOnTrack)
                 if (action) action.Invoke();
-            if (condition)
+            if (condition && condition.Evaluate()) Complete();
+            else if ( failCondition && failCondition.Evaluate()) Fail();
+            else
             {
-                if (condition.Evaluate()) Complete();
-                else condition.OnConditionStateChanged += OnConditionStateChanged;
+                if (condition) condition.OnConditionStateChanged += OnCompletionConditionStateChanged;
+                if (failCondition) failCondition.OnConditionStateChanged += OnFailConditionStateChanged;
             }
+        }
+        
+        private void OnCompletionConditionStateChanged()
+        {
+            if (condition && condition.Evaluate()) Complete();
+        }
+        
+        private void OnFailConditionStateChanged()
+        {
+            if (failCondition && failCondition.Evaluate()) Fail();
         }
 
         [ContextMenu("Complete")]
         protected void Complete()
         {
-            if (condition) condition.OnConditionStateChanged -= OnConditionStateChanged;
+            if (condition) condition.OnConditionStateChanged -= OnCompletionConditionStateChanged;
+            if (failCondition) failCondition.OnConditionStateChanged -= OnFailConditionStateChanged;
             if (State == StateType.Completed) return;
             State = StateType.Completed;
             foreach (ScriptableAction action in actionsOnComplete)
                 if (action) action.Invoke();
+        }
+        
+        [ContextMenu("Fail")]
+        protected void Fail()
+        {
+            if (condition) condition.OnConditionStateChanged -= OnCompletionConditionStateChanged;
+            if (failCondition) failCondition.OnConditionStateChanged -= OnFailConditionStateChanged;
+            if (State == StateType.Failed) return;
+            State = StateType.Failed;
         }
         
 #if UNITY_EDITOR

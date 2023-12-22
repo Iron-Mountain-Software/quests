@@ -12,6 +12,7 @@ namespace IronMountain.Quests.Editor
         protected GUIStyle NotTracking;
         protected GUIStyle Tracking;
         protected GUIStyle Completed;
+        protected GUIStyle Failed;
 
         protected virtual void OnEnable()
         {
@@ -102,6 +103,21 @@ namespace IronMountain.Quests.Editor
                 normal = new GUIStyleState
                 {
                     background = completedTexture,
+                    textColor = Color.white
+                }
+            };
+            
+            Texture2D failedTexture = new Texture2D(1, 1);
+            failedTexture.SetPixel(0, 0, Color.red);
+            failedTexture.Apply();
+            Failed = new GUIStyle
+            {
+                alignment = TextAnchor.MiddleCenter,
+                margin = new RectOffset(3, 3, 3, 3),
+                padding = new RectOffset(1, 1, 1, 1),
+                normal = new GUIStyleState
+                {
+                    background = failedTexture,
                     textColor = Color.white
                 }
             };

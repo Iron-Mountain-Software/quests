@@ -11,6 +11,7 @@ namespace IronMountain.Quests.Editor
         private QuestRequirement _questRequirement;
         private ScriptableActionsEditor _onTrackActionsEditor;
         private ConditionEditor _completionConditionEditor;
+        private ConditionEditor _failConditionEditor;
         private ScriptableActionsEditor _onCompleteActionsEditor;
         
         protected override void OnEnable()
@@ -20,6 +21,8 @@ namespace IronMountain.Quests.Editor
             _onTrackActionsEditor = new ScriptableActionsEditor("On Track", _questRequirement, _questRequirement.ActionsOnTrack);
             _completionConditionEditor = new ConditionEditor("To Complete", _questRequirement,
                 newCondition => _questRequirement.Condition = newCondition);
+            _failConditionEditor = new ConditionEditor("To Fail", _questRequirement,
+                newCondition => _questRequirement.FailCondition = newCondition);
             _onCompleteActionsEditor = new ScriptableActionsEditor("On Complete", _questRequirement, _questRequirement.ActionsOnComplete);
         }
         
@@ -29,6 +32,7 @@ namespace IronMountain.Quests.Editor
             DrawDependencies();
             _onTrackActionsEditor.Draw();
             _completionConditionEditor.Draw(ref _questRequirement.condition);
+            _failConditionEditor.Draw(ref _questRequirement.condition);
             _onCompleteActionsEditor.Draw();
             DrawOtherProperties();
             DrawEditorActionButtons();
@@ -128,7 +132,8 @@ namespace IronMountain.Quests.Editor
                 "dependencies",
                 "actionsOnTrack",
                 "actionsOnComplete",
-                "condition"
+                "condition",
+                "failCondition"
             );
         }
         

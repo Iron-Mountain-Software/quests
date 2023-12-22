@@ -1,5 +1,5 @@
 # Quests
-*Version: 1.5.2*
+*Version: 1.5.3*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
@@ -68,6 +68,7 @@ Scriptable Object Quests.
       * public List<ScriptableAction> ***ActionsOnTrack***  { get; }
       * public List<ScriptableAction> ***ActionsOnComplete***  { get; }
       * public Condition ***Condition***  { get; set; }
+      * public Condition ***FailCondition***  { get; set; }
       * public Sprite ***Depiction***  { get; }
       * public StateType ***State***  { get; set; }
       * public Boolean ***DescriptionHasErrors***  { get; }
