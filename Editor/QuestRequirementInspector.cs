@@ -13,6 +13,8 @@ namespace IronMountain.Quests.Editor
         private ConditionEditor _completionConditionEditor;
         private ConditionEditor _failConditionEditor;
         private ScriptableActionsEditor _onCompleteActionsEditor;
+
+        public bool localize;
         
         protected override void OnEnable()
         {
@@ -28,32 +30,45 @@ namespace IronMountain.Quests.Editor
         
         public override void OnInspectorGUI()
         {
-            DrawDescriptions();
+            DrawMainSettings();
             DrawDependencies();
             _onTrackActionsEditor.Draw();
             _completionConditionEditor.Draw(ref _questRequirement.condition);
             _failConditionEditor.Draw(ref _questRequirement.failCondition);
             _onCompleteActionsEditor.Draw();
-            DrawOtherProperties();
             DrawEditorActionButtons();
             serializedObject.ApplyModifiedProperties();
         }
 
-        private void DrawDescriptions()
+        private void DrawMainSettings()
         {
-            bool errors = _questRequirement.DescriptionHasErrors;
-            EditorGUILayout.BeginHorizontal(errors ? HeaderInvalid : HeaderValid, GUILayout.ExpandWidth(true));
-            GUILayout.Label("Descriptions", errors ? H1Invalid : H1Valid, GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultDetail"), new GUIContent("Detail"));
-            EditorGUI.indentLevel += 2;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("detail"), GUIContent.none);
-            EditorGUI.indentLevel -= 2;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultTip"), new GUIContent("Tip"));
-            EditorGUI.indentLevel += 2;
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("tip"), GUIContent.none);
-            EditorGUI.indentLevel -= 2;
+            if (!localize)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultDetail"), new GUIContent("Detail"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultTip"), new GUIContent("Tip"));
+            }
+            else
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("detail"), new GUIContent("Detail"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("tip"), new GUIContent("Tip"));
+            }
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("depiction"));
+            DrawPropertiesExcluding(serializedObject,
+                "m_Script",
+                "id",
+                "quest",
+                "defaultDetail",
+                "detail",
+                "defaultTip",
+                "tip",
+                "depiction",
+                "dependencies",
+                "actionsOnTrack",
+                "actionsOnComplete",
+                "condition",
+                "failCondition"
+            );
         }
 
         private void DrawDependencies()
@@ -114,43 +129,13 @@ namespace IronMountain.Quests.Editor
             EditorGUILayout.EndVertical();
         }
 
-        protected virtual void DrawOtherProperties()
-        {
-            GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(HeaderValid,GUILayout.ExpandWidth(true));
-            GUILayout.Label("Other", H1Valid, GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndHorizontal();
-            DrawPropertiesExcluding(serializedObject,
-                "m_Script",
-                "id",
-                "quest",
-                "defaultDetail",
-                "detail",
-                "defaultTip",
-                "tip",
-                "depiction",
-                "dependencies",
-                "actionsOnTrack",
-                "actionsOnComplete",
-                "condition",
-                "failCondition"
-            );
-        }
-        
         protected virtual void DrawEditorActionButtons()
         {
             GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal(HeaderValid,GUILayout.ExpandWidth(true));
-            GUILayout.Label("Editor Actions", H1Valid, GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Start Tracking", GUILayout.MinHeight(25)) && _questRequirement)
             {
                 _questRequirement.StartTracking();
-            }
-            if (GUILayout.Button("Delete Requirement", GUILayout.MinHeight(25)))
-            {
-                QuestRequirementsEditor.RemoveRequirementFromQuest(_questRequirement);
             }
             EditorGUILayout.EndHorizontal();
         }

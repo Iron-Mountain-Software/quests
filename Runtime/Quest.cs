@@ -170,11 +170,13 @@ namespace IronMountain.Quests
             LoadSavedInformation();
             BroadcastSavedInformation();
             if (prerequisites != null) prerequisites.OnConditionStateChanged += OnPrerequisitesStateChanged;
+            QuestsManager.Register(this);
         }
 
         protected virtual void OnDisable()
         {
             if (prerequisites != null) prerequisites.OnConditionStateChanged -= OnPrerequisitesStateChanged;
+            QuestsManager.Unregister(this);
         }
 
         protected void LoadSavedInformation()

@@ -31,7 +31,6 @@ namespace IronMountain.Quests.Editor
         [Header("Cache")]
         private readonly List<Quest> _quests = new();
         private Quest _selectedQuest;
-        private QuestRequirement _selectedQuestRequirement;
         private UnityEditor.Editor _cachedEditor;
         
         [OnOpenAsset(-1)]
@@ -51,16 +50,38 @@ namespace IronMountain.Quests.Editor
             return false;
         }
         
-        public static void Open(Quest selectedQuest = null, QuestRequirement selectedQuestRequirement = null)
+        public static QuestsEditorWindow Open(Quest selectedQuest = null, QuestRequirement selectedQuestRequirement = null)
         {
             Current = GetWindow<QuestsEditorWindow>("Quests", true);
             Current.minSize = new Vector2(700, 700);
-            Current._selectedQuest = selectedQuest;
-            Current._selectedQuestRequirement = selectedQuestRequirement;
-            Current.RefreshQuestsList();
+            Current.Select(selectedQuest, selectedQuestRequirement);
+            Current.RefreshIndex();
+            return Current;
+        }
+        
+        private void OnEnable()
+        {
+            QuestsManager.OnQuestsChanged += OnQuestsChanged;
         }
 
-        private void RefreshQuestsList()
+        private void OnFocus() => RefreshIndex();
+
+        private void OnDisable()
+        {
+            QuestsManager.OnQuestsChanged -= OnQuestsChanged;
+        }
+
+        private void OnQuestsChanged()
+        {
+            foreach (Quest quest in QuestsManager.Quests)
+            {
+                if (!quest || _quests.Contains(quest)) continue;
+                _quests.Add(quest);
+            }
+            Focus();
+        }
+
+        private void RefreshIndex()
         {
             _quests.Clear();
             AssetDatabase.Refresh();
@@ -69,7 +90,8 @@ namespace IronMountain.Quests.Editor
             {
                 string assetPath = AssetDatabase.GUIDToAssetPath( guids[i] );
                 Quest quest = AssetDatabase.LoadAssetAtPath<Quest>( assetPath );
-                if (quest) _quests.Add(quest);
+                if (!quest || _quests.Contains(quest)) continue;
+                _quests.Add(quest);
             }
         }
 
@@ -85,13 +107,7 @@ namespace IronMountain.Quests.Editor
             GUILayout.BeginArea(_contentSection);
             if (_selectedQuest)
             {
-                _selectedQuestRequirement = QuestInspectorHeader.Draw(_selectedQuest, _selectedQuestRequirement);
                 _contentScroll = GUILayout.BeginScrollView(_contentScroll);
-                if (_selectedQuestRequirement)
-                {
-                    UnityEditor.Editor.CreateCachedEditor(_selectedQuestRequirement, null, ref _cachedEditor);
-                }
-                else UnityEditor.Editor.CreateCachedEditor(_selectedQuest, null, ref _cachedEditor);
                 _cachedEditor.OnInspectorGUI();
                 GUILayout.EndScrollView();
             }
@@ -116,30 +132,25 @@ namespace IronMountain.Quests.Editor
             _contentSection.height = Current.position.height;
         }
 
-        private void SelectQuest(Quest quest)
+        private void Select(Quest quest, QuestRequirement questRequirement)
         {
             Selection.activeObject = quest;
             GUI.FocusControl(null);
             _selectedQuest = quest;
-            _selectedQuestRequirement = null;
+            UnityEditor.Editor.CreateCachedEditor(_selectedQuest, null, ref _cachedEditor);
+            if (_cachedEditor is QuestInspector questInspector)
+            {
+                questInspector.selectedQuestRequirement = questRequirement;
+            }
         }
         
         private void DrawSidebar()
         {
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+
+            if (GUILayout.Button("Create", GUILayout.Height(40))) NewQuestWindow.Open();
             
-            if (GUILayout.Button("Refresh"))
-            {
-                RefreshQuestsList();
-            }
-            
-            if (GUILayout.Button("Create New"))
-            {
-                AddQuestMenu.Open();
-                RefreshQuestsList();
-            }
-            
-            EditorGUILayout.Space();
+            EditorGUILayout.Space(4);
             DrawFilterButtons();
             EditorGUILayout.Space();
             
@@ -163,7 +174,7 @@ namespace IronMountain.Quests.Editor
                 string questName = quest.name.Trim(' ', '_');
                 EditorGUI.BeginDisabledGroup(quest == _selectedQuest);
                 if (GUILayout.Button(" " + quest.Priority + ". " + questName, GUILayout.MaxHeight(25)))
-                    SelectQuest(quest);
+                    Select(quest, null);
                 GUILayout.Label(quest.HasErrors()
                         ? new GUIContent(EditorGUIUtility.IconContent("console.erroricon"))
                         : new GUIContent(EditorGUIUtility.IconContent("TestPassed")), 

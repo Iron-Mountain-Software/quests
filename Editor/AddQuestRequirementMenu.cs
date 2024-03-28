@@ -35,6 +35,7 @@ namespace IronMountain.Quests.Editor
                         {
                             QuestRequirement requirement = ScriptableObject.CreateInstance(derivedType) as QuestRequirement;
                             QuestRequirementsEditor.AddRequirementToQuest(requirement, quest);
+                            QuestsEditorWindow.Open(quest, requirement);
                         });
                 }
                 menu.ShowAsContext();
