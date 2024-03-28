@@ -1,3 +1,4 @@
+using IronMountain.Quests.Editor.Windows;
 using UnityEditor;
 
 namespace IronMountain.Quests.Editor
@@ -7,7 +8,7 @@ namespace IronMountain.Quests.Editor
         [MenuItem("Iron Mountain/Quests Window", priority = 1)]
         static void OpenEditorWindow()
         {
-            QuestsEditorWindow.Open();
+            QuestsWindow.Open();
         }
     }
 }

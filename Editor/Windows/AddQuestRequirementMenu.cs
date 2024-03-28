@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Windows
 {
     public static class AddQuestRequirementMenu
     {
@@ -35,7 +35,6 @@ namespace IronMountain.Quests.Editor
                         {
                             QuestRequirement requirement = ScriptableObject.CreateInstance(derivedType) as QuestRequirement;
                             QuestRequirementsEditor.AddRequirementToQuest(requirement, quest);
-                            QuestsEditorWindow.Open(quest, requirement);
                         });
                 }
                 menu.ShowAsContext();

@@ -9,10 +9,10 @@ namespace IronMountain.Quests.Editor
         protected GUIStyle HeaderInvalid;
         protected GUIStyle H1Valid;
         protected GUIStyle H1Invalid;
-        protected GUIStyle NotTracking;
-        protected GUIStyle Tracking;
-        protected GUIStyle Completed;
-        protected GUIStyle Failed;
+        protected GUIStyle Inactive;
+        protected GUIStyle Active;
+        protected GUIStyle Complete;
+        protected GUIStyle Fail;
 
         protected virtual void OnEnable()
         {
@@ -65,7 +65,7 @@ namespace IronMountain.Quests.Editor
             Texture2D notTrackingTexture = new Texture2D(1, 1);
             notTrackingTexture.SetPixel(0, 0, new Color(0.58f, 0.58f, 0.58f));
             notTrackingTexture.Apply();
-            NotTracking = new GUIStyle
+            Inactive = new GUIStyle
             {
                 alignment = TextAnchor.MiddleCenter,
                 margin = new RectOffset(3, 3, 3, 3),
@@ -80,7 +80,7 @@ namespace IronMountain.Quests.Editor
             Texture2D trackingTexture = new Texture2D(1, 1);
             trackingTexture.SetPixel(0, 0, new Color(0.99f, 0.95f, 0.15f));
             trackingTexture.Apply();
-            Tracking = new GUIStyle
+            Active = new GUIStyle
             {
                 alignment = TextAnchor.MiddleCenter,
                 margin = new RectOffset(3, 3, 3, 3),
@@ -95,7 +95,7 @@ namespace IronMountain.Quests.Editor
             Texture2D completedTexture = new Texture2D(1, 1);
             completedTexture.SetPixel(0, 0, new Color(0f, 0.76f, 0.08f));
             completedTexture.Apply();
-            Completed = new GUIStyle
+            Complete = new GUIStyle
             {
                 alignment = TextAnchor.MiddleCenter,
                 margin = new RectOffset(3, 3, 3, 3),
@@ -110,7 +110,7 @@ namespace IronMountain.Quests.Editor
             Texture2D failedTexture = new Texture2D(1, 1);
             failedTexture.SetPixel(0, 0, Color.red);
             failedTexture.Apply();
-            Failed = new GUIStyle
+            Fail = new GUIStyle
             {
                 alignment = TextAnchor.MiddleCenter,
                 margin = new RectOffset(3, 3, 3, 3),

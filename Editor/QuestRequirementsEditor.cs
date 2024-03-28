@@ -15,7 +15,6 @@ namespace IronMountain.Quests.Editor
             requirement.Quest = quest;
             requirement.OnValidate();
             quest.OnValidate();
-            Selection.activeObject = requirement;
             AssetDatabase.SaveAssets();
         }
 
@@ -27,11 +26,7 @@ namespace IronMountain.Quests.Editor
             if (quest) quest.Requirements.RemoveAll(test => test == requirement);
             requirement.Quest = null;
             Object.DestroyImmediate(requirement);
-            if (quest)
-            {
-                quest.OnValidate();
-                Selection.activeObject = quest;
-            }
+            if (quest) quest.OnValidate();
             AssetDatabase.SaveAssets();
         }
     }

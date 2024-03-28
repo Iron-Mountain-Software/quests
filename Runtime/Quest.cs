@@ -12,16 +12,8 @@ using UnityEngine.Localization;
 namespace IronMountain.Quests
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Gameplay/Quests/Quest")]
-    public class Quest : ScriptableObject
+    public class Quest : StoryEvent
     {
-        [Serializable]
-        public enum StateType
-        {
-            None = 0,
-            Active = 1,
-            Completed = 2
-        }
-        
         [Serializable]
         public enum StoryType
         {
@@ -29,13 +21,9 @@ namespace IronMountain.Quests
             Side
         }
         
-        public static event Action<Quest> OnAnyStateChanged;
         public static event Action<Quest> OnAnyViewsChanged;
-
-        public event Action OnStateChanged;
         public event Action OnViewsChanged;
         
-        [SerializeField] private string id;
         [SerializeField] private string defaultName;
         [SerializeField] private LocalizedString localizedName;
         [SerializeField] private string defaultDescription;
@@ -45,42 +33,26 @@ namespace IronMountain.Quests
 
         [SerializeField] private StoryType type;
         [SerializeField] private int priority;
-
-        [SerializeField] public Condition prerequisites;
-        [SerializeField] private List<ScriptableAction> actionsOnActivate = new();
-        [SerializeField] private List<ScriptableAction> actionsOnComplete = new();
+        
         [SerializeField] private List<QuestRequirement> requirements = new();
         
-        private SavedInt _state;
         private SavedInt _views;
 
-        public string ID
+        public int Priority
         {
-            get => id;
-            set => id = value;
+            get => priority;
+            set => priority = value;
         }
 
-        public virtual string Name => name;
-        public int Priority => priority;
-        public StoryType Type => type;
-
-        public Condition Prerequisites
+        public StoryType Type
         {
-            get => prerequisites;
-            set => prerequisites = value;
+            get => type;
+            set => type = value;
         }
 
-        public bool PrerequisitesSatisfied => !prerequisites || prerequisites.Evaluate();
-
-        public List<ScriptableAction> ActionsOnActivate => actionsOnActivate;
-        public List<ScriptableAction> ActionsOnComplete => actionsOnComplete;
         public List<QuestRequirement> Requirements => requirements;
-        public List<QuestRequirement> CompletedRequirements =>
-            Requirements.FindAll(requirement => requirement.State == QuestRequirement.StateType.Completed);
-
-        public bool ReadyToComplete => State == StateType.Active && CompletedRequirements.Count == Requirements.Count;
-
-        public string LocalizedName
+        
+        public string Name
         {
             get
             {
@@ -99,6 +71,7 @@ namespace IronMountain.Quests
 				return defaultName;
 #endif
             }
+            set => defaultName = value;
         }
 
         public string Description
@@ -120,6 +93,8 @@ namespace IronMountain.Quests
 				return defaultDescription;
 #endif
             }
+            set => defaultDescription = value;
+
         }
 
         public string Conclusion
@@ -141,16 +116,7 @@ namespace IronMountain.Quests
 				return defaultConclusion;
 #endif
             }
-        }
-
-        public StateType State
-        {
-            get => (StateType) _state.Value;
-            private set
-            {
-                if (_state.Value == (int) value) return;
-                _state.Value = (int) value;
-            }
+            set => defaultConclusion = value;
         }
 
         public int Views
@@ -163,86 +129,56 @@ namespace IronMountain.Quests
             }
         }
         
-        protected virtual string Directory => Path.Combine("Quests", ID);
+        protected override string Directory => Path.Combine("Quests", ID);
 
-        protected virtual void OnEnable()
+        protected override void OnEnable()
         {
-            LoadSavedInformation();
-            BroadcastSavedInformation();
-            if (prerequisites != null) prerequisites.OnConditionStateChanged += OnPrerequisitesStateChanged;
+            base.OnEnable();
             QuestsManager.Register(this);
         }
 
-        protected virtual void OnDisable()
+        protected override void OnDisable()
         {
-            if (prerequisites != null) prerequisites.OnConditionStateChanged -= OnPrerequisitesStateChanged;
+            base.OnDisable();
             QuestsManager.Unregister(this);
         }
 
-        protected void LoadSavedInformation()
+        protected override void LoadSavedData()
         {
-            string directory = Directory;
-            _state = new SavedInt(directory, "State.txt", 0, () =>
-            {
-                OnStateChanged?.Invoke();
-                OnAnyStateChanged?.Invoke(this);
-            });
-            _views = new SavedInt(directory, "Views.txt", 0, () =>
+            base.LoadSavedData();
+            _views = new SavedInt(Directory, "Views.txt", 0, () =>
             {
                 OnViewsChanged?.Invoke();
                 OnAnyViewsChanged?.Invoke(this);
             });
         }
 
-        protected void BroadcastSavedInformation()
+        protected override void BroadcastSavedData()
         {
-            OnStateChanged?.Invoke();
-            OnAnyStateChanged?.Invoke(this);
+            base.BroadcastSavedData();
             OnViewsChanged?.Invoke();
             OnAnyViewsChanged?.Invoke(this);
         }
 
-        public void Refresh()
+        public override void Refresh()
         {
-            switch (State)
+            StopListening();
+            StateType state = State;
+            if (state is StateType.Inactive) Restart();
+            else if (state is StateType.Active) Activate();
+            foreach (QuestRequirement requirement in requirements)
             {
-                case StateType.None:
-                    if (PrerequisitesSatisfied) Activate();
-                    break;
-                case StateType.Active:
-                    foreach (QuestRequirement requirement in requirements)
-                        if (requirement) requirement.StartTracking();
-                    break;
-                case StateType.Completed:
-                    break;
+                if (requirement) requirement.Refresh();
             }
         }
-
-        private void OnPrerequisitesStateChanged()
-        {
-            if (State == StateType.None && PrerequisitesSatisfied) Activate();
-        }
         
-        [ContextMenu("Activate", false, 0)]
-        public virtual bool Activate()
+        public override void Restart()
         {
-            if (State == StateType.Completed) return false;
-            State = StateType.Active;
-            foreach (ScriptableAction action in actionsOnActivate)
-                if (action) action.Invoke();
-            foreach (QuestRequirement requirement in Requirements)
-                if (requirement) requirement.StartTracking();
-            return true;
-        }
-        
-        [ContextMenu("Complete", false, 0)]
-        public virtual bool Complete()
-        {
-            if (State != StateType.Active) return false;
-            State = StateType.Completed;
-            foreach (ScriptableAction action in actionsOnComplete)
-                if (action) action.Invoke();
-            return true;
+            base.Restart();
+            foreach (QuestRequirement requirement in requirements)
+            {
+                if (requirement) requirement.Restart();
+            }
         }
 
 #if UNITY_EDITOR
@@ -254,21 +190,17 @@ namespace IronMountain.Quests
             RenameComponents();
         }
 
-        public virtual void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
             PruneRequirements();
             RenameComponents();
-        }
-        
-        [ContextMenu("Generate New ID")]
-        private void GenerateNewID()
-        {
-            ID = UnityEditor.GUID.Generate().ToString();
         }
 
         [ContextMenu("Prune Requirements")]
         private void PruneRequirements()
         {
+            if (requirements == null || requirements.Count == 0) return;
             requirements = requirements.Distinct().ToList();
             requirements.RemoveAll(requirement => !requirement || requirement.Quest != this);
         }
@@ -286,29 +218,29 @@ namespace IronMountain.Quests
                 QuestRequirement requirement = Requirements[i];
                 if (!requirement) continue;
                 string prefix = (i + 1).ToString();
-                bool noCondition = !requirement.Condition;
-                bool noActions = requirement.ActionsOnTrack.Count == 0
-                                  && requirement.ActionsOnComplete.Count == 0;
+                bool noCondition = !requirement.completionCondition;
+                bool noActions = requirement.actionsOnActivate.Count == 0
+                                  && requirement.actionsOnComplete.Count == 0;
                 requirement.name = prefix + (noCondition && noActions ? ".0 ─ " : ".0 ┬ ") + requirement.Detail;
                 decimalPrefix = 1;
-                if (requirement.Condition)
+                if (requirement.completionCondition)
                 {
                     decimalPrefix++;
-                    requirement.Condition.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Condition - " + requirement.Condition;
+                    requirement.completionCondition.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Condition - " + requirement.completionCondition;
                 }
-                for (int onTrackIndex = 0; onTrackIndex < requirement.ActionsOnTrack.Count; onTrackIndex++)
+                for (int onTrackIndex = 0; onTrackIndex < requirement.actionsOnActivate.Count; onTrackIndex++)
                 {
-                    ScriptableAction action = requirement.ActionsOnTrack[onTrackIndex];
+                    ScriptableAction action = requirement.actionsOnActivate[onTrackIndex];
                     if (!action) continue;
-                    bool isLast = onTrackIndex == requirement.ActionsOnTrack.Count - 1 && requirement.ActionsOnComplete.Count == 0;
+                    bool isLast = onTrackIndex == requirement.actionsOnActivate.Count - 1 && requirement.actionsOnComplete.Count == 0;
                     decimalPrefix++;
                     action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Track - " + action.ToString();
                 }
-                for (int onCompleteIndex = 0; onCompleteIndex < Requirements[i].ActionsOnComplete.Count; onCompleteIndex++)
+                for (int onCompleteIndex = 0; onCompleteIndex < Requirements[i].actionsOnComplete.Count; onCompleteIndex++)
                 {
-                    ScriptableAction action = requirement.ActionsOnComplete[onCompleteIndex];
+                    ScriptableAction action = requirement.actionsOnComplete[onCompleteIndex];
                     if (!action) continue;
-                    bool isLast = onCompleteIndex == requirement.ActionsOnComplete.Count - 1;
+                    bool isLast = onCompleteIndex == requirement.actionsOnComplete.Count - 1;
                     decimalPrefix++;
                     action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Complete - "  + action;
                 }
@@ -330,7 +262,7 @@ namespace IronMountain.Quests
             }
         }
 
-        public virtual string WriteDocumentation()
+        public override string GetDocumentation()
         {
             StringBuilder documentation = new StringBuilder();
             documentation.AppendLine("QUEST:       " + name);
@@ -342,10 +274,7 @@ namespace IronMountain.Quests
             foreach (QuestRequirement requirement in requirements)
             {
                 if (!requirement) continue;
-                int display = index + 1;
-                documentation.AppendLine(index + ") " + requirement.Name);
-                documentation.AppendLine("  ┣━ " + requirement.Detail);
-                documentation.AppendLine("  ┗━ " + requirement.Tip);
+                documentation.AppendLine(index + ") " + requirement.GetDocumentation());
                 index++;
             }
             documentation.AppendLine("CONCLUSION: " + Conclusion);
@@ -359,9 +288,7 @@ namespace IronMountain.Quests
             (description.IsEmpty || string.IsNullOrEmpty(description.TableReference))
             || string.IsNullOrWhiteSpace(defaultConclusion) &&
             (conclusion.IsEmpty || string.IsNullOrEmpty(conclusion.TableReference));
-
-        public bool PrerequisitesHaveErrors => prerequisites && prerequisites.HasErrors();
-
+        
         public bool RequirementsHaveErrors
         {
             get
@@ -374,12 +301,10 @@ namespace IronMountain.Quests
             }
         }
 
-        public virtual bool HasErrors() =>
-            string.IsNullOrWhiteSpace(ID)
+        public override bool HasErrors() =>
+            base.HasErrors()
             || DescriptionHasErrors
-            || PrerequisitesHaveErrors
             || RequirementsHaveErrors;
-
 #endif
     }
 }

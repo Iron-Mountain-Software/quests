@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Windows
 {
-    public class QuestsEditorWindow : EditorWindow
+    public class QuestsWindow : EditorWindow
     {
-        private static QuestsEditorWindow Current { get; set; }
+        private static QuestsWindow Current { get; set; }
         
-        private enum QuestFilter
+        private enum SortType
         {
-            All,
-            Main,
-            Side
+            Priority,
+            Path
         }
 
-        private QuestFilter _questFilter = QuestFilter.All;
+        private static bool _filterEnabled = true;
+        private static Quest.StoryType _questFilter = Quest.StoryType.Main;
+        private static SortType _sortType = SortType.Path;
         
         private Vector2 _sidebarScroll = Vector2.zero;
         private Vector2 _contentScroll = Vector2.zero;
@@ -50,9 +53,9 @@ namespace IronMountain.Quests.Editor
             return false;
         }
         
-        public static QuestsEditorWindow Open(Quest selectedQuest = null, QuestRequirement selectedQuestRequirement = null)
+        public static QuestsWindow Open(Quest selectedQuest = null, QuestRequirement selectedQuestRequirement = null)
         {
-            Current = GetWindow<QuestsEditorWindow>("Quests", true);
+            Current = GetWindow<QuestsWindow>("Quests", true);
             Current.minSize = new Vector2(700, 700);
             Current.Select(selectedQuest, selectedQuestRequirement);
             Current.RefreshIndex();
@@ -100,9 +103,7 @@ namespace IronMountain.Quests.Editor
             Current = this;
             DrawLayouts();
             
-            GUILayout.BeginArea(_sidebarSection);
             DrawSidebar();
-            GUILayout.EndArea();
             
             GUILayout.BeginArea(_contentSection);
             if (_selectedQuest)
@@ -146,66 +147,122 @@ namespace IronMountain.Quests.Editor
         
         private void DrawSidebar()
         {
+            GUILayout.BeginArea(_sidebarSection);
             EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-
+            
             if (GUILayout.Button("Create", GUILayout.Height(40))) NewQuestWindow.Open();
             
             EditorGUILayout.Space(4);
-            DrawFilterButtons();
-            EditorGUILayout.Space();
             
-            _quests.Sort(Comparison);
+            DrawSortButtons();
+            DrawFilterButtons();
+            
+            EditorGUILayout.Space();
+
+            switch (_sortType)
+            {
+                case SortType.Path:
+                    _quests.Sort(ComparePath);
+                    break;
+                case SortType.Priority:
+                    _quests.Sort(ComparePriority);
+                    break;
+                default:
+                    _quests.Sort(ComparePath);
+                    break;
+            }
 
             _sidebarScroll.x = 0;
             _sidebarScroll = EditorGUILayout.BeginScrollView(_sidebarScroll, false, true);
             int _lastPriority = int.MinValue;
+            string lastDirectory = string.Empty;
             foreach(Quest quest in _quests)
             {
-                if (!quest
-                    || _questFilter == QuestFilter.Main && quest.Type != Quest.StoryType.Main
-                    || _questFilter == QuestFilter.Side && quest.Type != Quest.StoryType.Side) continue;
-                if (quest.Priority / 100 > _lastPriority / 100)
+                if (!quest) continue;
+                
+                if (_filterEnabled && quest.Type != _questFilter) continue;
+
+                if (_sortType == SortType.Path)
                 {
-                    EditorGUILayout.Space(10);
-                    _lastPriority = quest.Priority;
+                    string path = AssetDatabase.GetAssetPath(quest).Split(Path.DirectorySeparatorChar).ToList()[^3];
+                    if (path != lastDirectory)
+                    {
+                        EditorGUILayout.LabelField(path);
+                        lastDirectory = path;
+                    }
                 }
 
-                EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(_sidebarWidth - 20));
-                string questName = quest.name.Trim(' ', '_');
-                EditorGUI.BeginDisabledGroup(quest == _selectedQuest);
-                if (GUILayout.Button(" " + quest.Priority + ". " + questName, GUILayout.MaxHeight(25)))
-                    Select(quest, null);
-                GUILayout.Label(quest.HasErrors()
-                        ? new GUIContent(EditorGUIUtility.IconContent("console.erroricon"))
-                        : new GUIContent(EditorGUIUtility.IconContent("TestPassed")), 
-                    GUILayout.MaxWidth(15), GUILayout.MaxHeight(25));
-                EditorGUILayout.EndHorizontal();
-                EditorGUI.EndDisabledGroup();
+                if (_sortType == SortType.Priority)
+                {
+                    if (quest.Priority / 100 > _lastPriority / 100)
+                    {
+                        EditorGUILayout.Space(10);
+                        _lastPriority = quest.Priority;
+                    }
+                }
+
+                DrawSideBarQuestItem(quest);
             }
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
+            GUILayout.EndArea();
+        }
+
+        private void DrawSideBarQuestItem(Quest quest)
+        {
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(_sidebarWidth - 20));
+            string questName = quest.name.Trim(' ', '_');
+            EditorGUI.BeginDisabledGroup(quest == _selectedQuest);
+            string label = _sortType == SortType.Priority
+                ? " " + quest.Priority + ". " + questName
+                : questName;
+            if (GUILayout.Button(label, GUILayout.MaxHeight(25)))
+                Select(quest, null);
+            GUILayout.Label(quest.HasErrors()
+                    ? new GUIContent(EditorGUIUtility.IconContent("console.erroricon"))
+                    : new GUIContent(EditorGUIUtility.IconContent("TestPassed")), 
+                GUILayout.MaxWidth(15), GUILayout.MaxHeight(25));
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.EndDisabledGroup();
         }
 
         private void DrawFilterButtons()
         {
             EditorGUILayout.BeginHorizontal();
-            
-            EditorGUI.BeginDisabledGroup(_questFilter == QuestFilter.All);
-            if (GUILayout.Button("All")) _questFilter = QuestFilter.All;
+            EditorGUILayout.LabelField("Filter:", GUILayout.Width(55));
+            _filterEnabled = EditorGUILayout.Toggle(GUIContent.none, _filterEnabled, GUILayout.Width(15));
+            EditorGUI.BeginDisabledGroup(!_filterEnabled);
+            EditorGUI.BeginDisabledGroup(_questFilter == Quest.StoryType.Main);
+            if (GUILayout.Button("Main")) _questFilter = Quest.StoryType.Main;
             EditorGUI.EndDisabledGroup();
-            
-            EditorGUI.BeginDisabledGroup(_questFilter == QuestFilter.Main);
-            if (GUILayout.Button("Main")) _questFilter = QuestFilter.Main;
+            EditorGUI.BeginDisabledGroup(_questFilter == Quest.StoryType.Side);
+            if (GUILayout.Button("Side")) _questFilter = Quest.StoryType.Side;
             EditorGUI.EndDisabledGroup();
-
-            EditorGUI.BeginDisabledGroup(_questFilter == QuestFilter.Side);
-            if (GUILayout.Button("Side")) _questFilter = QuestFilter.Side;
             EditorGUI.EndDisabledGroup();
-            
             EditorGUILayout.EndHorizontal();
         }
+        
+        private void DrawSortButtons()
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Sort:", GUILayout.Width(55));
+            EditorGUI.BeginDisabledGroup(_sortType == SortType.Path);
+            if (GUILayout.Button("Path")) _sortType = SortType.Path;
+            EditorGUI.EndDisabledGroup();
+            EditorGUI.BeginDisabledGroup(_sortType == SortType.Priority);
+            if (GUILayout.Button("Priority")) _sortType = SortType.Priority;
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndHorizontal();
+        }
+        
+        private int ComparePath(Quest a, Quest b)
+        {
+            if (!a) return -1;
+            if (!b) return 1;
+            return string.Compare(AssetDatabase.GetAssetPath(a), AssetDatabase.GetAssetPath(b), StringComparison.Ordinal);
+        }
 
-        private int Comparison(Quest a, Quest b)
+        private int ComparePriority(Quest a, Quest b)
         {
             if (!a) return -1;
             if (!b) return 1;

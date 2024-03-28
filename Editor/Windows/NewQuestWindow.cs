@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Windows
 {
     public class NewQuestWindow : EditorWindow
     {
@@ -12,12 +12,16 @@ namespace IronMountain.Quests.Editor
 
         private string _folder = Path.Join("Assets", "Scriptable Objects", "Quests");
         private string _name = "New Quest";
-        
+        private string _description = string.Empty;
+        private string _conclusion = string.Empty;
+        private Quest.StoryType _type = Quest.StoryType.Main;
+        private int _priority = 0;
+
         public static void Open()
         {
             NewQuestWindow window = GetWindow(typeof(NewQuestWindow), false, "Create Quest", true) as NewQuestWindow;
-            window.minSize = new Vector2(520, 160);
-            window.maxSize = new Vector2(520, 160);
+            window.minSize = new Vector2(520, 225);
+            window.maxSize = new Vector2(520, 225);
             window.wantsMouseMove = true;
         }
 
@@ -37,6 +41,13 @@ namespace IronMountain.Quests.Editor
 
             _questTypeIndex = EditorGUILayout.Popup("Type", _questTypeIndex, TypeIndex.QuestTypeNames);
             
+            EditorGUILayout.Space(10);
+            
+            _description = EditorGUILayout.TextField("Description:", _description);
+            _conclusion = EditorGUILayout.TextField("Conclusion:", _conclusion);
+            _type = (Quest.StoryType) EditorGUILayout.EnumPopup("Type:", _type);
+            _priority = EditorGUILayout.IntField("Priority: ", _priority);
+
             EditorGUILayout.Space(10);
             
             if (GUILayout.Button("Create Quest", GUILayout.Height(35))) CreateConversation();
@@ -62,6 +73,14 @@ namespace IronMountain.Quests.Editor
             Type questType = TypeIndex.QuestTypes[_questTypeIndex];
             Quest quest = CreateInstance(questType) as Quest;
             if (!quest) return;
+
+            quest.name = _name;
+            quest.Name = _name;
+            quest.Description = _description;
+            quest.Conclusion = _conclusion;
+            quest.Type = _type;
+            quest.Priority = _priority;
+            
             CreateFolders();
             string path = Path.Combine(_folder, _name + ".asset");
             
@@ -72,7 +91,7 @@ namespace IronMountain.Quests.Editor
 
             Close();
             
-            QuestsEditorWindow.Open(quest).Focus();
+            QuestsWindow.Open(quest).Focus();
         }
 
         private void CreateFolders()

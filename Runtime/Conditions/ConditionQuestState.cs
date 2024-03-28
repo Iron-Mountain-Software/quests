@@ -8,7 +8,7 @@ namespace IronMountain.Quests.Conditions
     {
         [SerializeField] private Quest quest;
         [SerializeField] private BooleanComparisonType comparisonType = BooleanComparisonType.Is;
-        [SerializeField] private Quest.StateType state = Quest.StateType.None;
+        [SerializeField] private Quest.StateType state = Quest.StateType.Inactive;
 
         private void OnEnable()
         {

@@ -1,5 +1,5 @@
 # Quests
-*Version: 1.5.4*
+*Version: 2.0.0*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
@@ -23,63 +23,62 @@ Scriptable Object Quests.
       * public void ***SortList***()
       * public void ***RebuildDictionary***()
       * public override String ***ToString***()
-1. public class **Quest** : ScriptableObject
+1. public class **Quest** : StoryEvent
    * Actions: 
-      * public event Action ***OnStateChanged*** 
       * public event Action ***OnViewsChanged*** 
    * Properties: 
-      * public String ***ID***  { get; set; }
-      * public String ***Name***  { get; }
-      * public Int32 ***Priority***  { get; }
-      * public StoryType ***Type***  { get; }
-      * public Condition ***Prerequisites***  { get; set; }
-      * public Boolean ***PrerequisitesSatisfied***  { get; }
-      * public List<ScriptableAction> ***ActionsOnActivate***  { get; }
-      * public List<ScriptableAction> ***ActionsOnComplete***  { get; }
+      * public Int32 ***Priority***  { get; set; }
+      * public StoryType ***Type***  { get; set; }
       * public List<QuestRequirement> ***Requirements***  { get; }
-      * public List<QuestRequirement> ***CompletedRequirements***  { get; }
-      * public Boolean ***ReadyToComplete***  { get; }
-      * public String ***LocalizedName***  { get; }
-      * public String ***Description***  { get; }
-      * public String ***Conclusion***  { get; }
-      * public StateType ***State***  { get; }
+      * public String ***Name***  { get; set; }
+      * public String ***Description***  { get; set; }
+      * public String ***Conclusion***  { get; set; }
       * public Int32 ***Views***  { get; set; }
       * public Boolean ***DescriptionHasErrors***  { get; }
-      * public Boolean ***PrerequisitesHaveErrors***  { get; }
       * public Boolean ***RequirementsHaveErrors***  { get; }
    * Methods: 
-      * public void ***Refresh***()
-      * public virtual Boolean ***Activate***()
-      * public virtual Boolean ***Complete***()
+      * public override void ***Refresh***()
+      * public override void ***Restart***()
       * public virtual void ***Reset***()
-      * public virtual void ***OnValidate***()
-      * public virtual String ***WriteDocumentation***()
-      * public virtual Boolean ***HasErrors***()
-1. public class **QuestRequirement** : ScriptableObject
-   * Actions: 
-      * public event Action ***OnStateChanged*** 
+      * public override void ***OnValidate***()
+      * public override String ***GetDocumentation***()
+      * public override Boolean ***HasErrors***()
+1. public class **QuestRequirement** : StoryEvent
    * Properties: 
-      * public String ***ID***  { get; set; }
       * public String ***Name***  { get; }
       * public Quest ***Quest***  { get; set; }
       * public String ***Detail***  { get; }
       * public String ***Tip***  { get; }
-      * public List<QuestRequirement> ***Dependencies***  { get; }
-      * public List<ScriptableAction> ***ActionsOnTrack***  { get; }
-      * public List<ScriptableAction> ***ActionsOnComplete***  { get; }
-      * public Condition ***Condition***  { get; set; }
-      * public Condition ***FailCondition***  { get; set; }
       * public Sprite ***Depiction***  { get; }
-      * public StateType ***State***  { get; set; }
       * public Boolean ***DescriptionHasErrors***  { get; }
-      * public Boolean ***DependenciesHaveErrors***  { get; }
-      * public Boolean ***CompletionConditionHasErrors***  { get; }
    * Methods: 
-      * public void ***StartTracking***()
+      * public override void ***Refresh***()
       * public virtual void ***Reset***()
+      * public override void ***OnValidate***()
+      * public override Boolean ***HasErrors***()
+      * public override String ***GetDocumentation***()
+1. public class **QuestsManager** : MonoBehaviour
+1. public abstract class **StoryEvent** : ScriptableObject
+   * Actions: 
+      * public event Action ***OnStateChanged*** 
+   * Properties: 
+      * public StateType ***State***  { get; }
+      * public String ***ID***  { get; }
+      * public Boolean ***CanActivate***  { get; }
+      * public Boolean ***CanComplete***  { get; }
+      * public Boolean ***CanFail***  { get; }
+      * public Boolean ***PrerequisitesHaveErrors***  { get; }
+      * public Boolean ***CompletionConditionHasErrors***  { get; }
+      * public Boolean ***FailConditionHasErrors***  { get; }
+   * Methods: 
+      * public abstract void ***Refresh***()
+      * public virtual void ***Restart***()
+      * public virtual void ***Activate***()
+      * public virtual void ***Complete***()
+      * public virtual void ***Fail***()
       * public virtual void ***OnValidate***()
       * public virtual Boolean ***HasErrors***()
-1. public class **QuestsManager** : MonoBehaviour
+      * public abstract String ***GetDocumentation***()
 ### Conditions
 1. public class **ConditionQuestRequirementState** : Condition
    * Properties: 
