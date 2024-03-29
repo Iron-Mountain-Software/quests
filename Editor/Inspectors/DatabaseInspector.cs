@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Inspectors
 {
     [CustomEditor(typeof(Database), true)]
     public class DatabaseInspector : UnityEditor.Editor

@@ -1,17 +1,18 @@
 using IronMountain.Conditions;
 using UnityEngine;
 
-namespace IronMountain.Quests.Conditions
+namespace IronMountain.Quests
 {
     [CreateAssetMenu(menuName = "Scriptable Objects/Gameplay/Quests/Conditions/Quest State")]
-    public class ConditionQuestState : Condition
+    public class QuestStateCondition : Condition
     {
         [SerializeField] private Quest quest;
         [SerializeField] private BooleanComparisonType comparisonType = BooleanComparisonType.Is;
-        [SerializeField] private Quest.StateType state = Quest.StateType.Inactive;
+        [SerializeField] private StoryEvent.StateType state = StoryEvent.StateType.Inactive;
 
         private void OnEnable()
         {
+            Debug.LogError("I'M DEPRECATED!");
             if (quest) quest.OnStateChanged += OnStateChanged;
         }
 

@@ -2,10 +2,10 @@ using IronMountain.Quests.Editor.Windows;
 using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Inspectors
 {
     [CustomEditor(typeof(Quest), true)]
-    public class QuestInspector : StoryEventEditor
+    public class QuestInspector : StoryEventInspector
     {
         public QuestRequirement selectedQuestRequirement;
 

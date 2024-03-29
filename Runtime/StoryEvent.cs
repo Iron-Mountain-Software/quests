@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using IronMountain.Conditions;
 using IronMountain.SaveSystem;
 using IronMountain.ScriptableActions;

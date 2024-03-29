@@ -1,5 +1,5 @@
 # Quests
-*Version: 2.0.1*
+*Version: 2.0.2*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
@@ -57,6 +57,13 @@ Scriptable Object Quests.
       * public override void ***OnValidate***()
       * public override Boolean ***HasErrors***()
       * public override String ***GetDocumentation***()
+1. public class **QuestStateCondition** : Condition
+   * Properties: 
+      * public Sprite ***Depiction***  { get; }
+   * Methods: 
+      * public override Boolean ***Evaluate***()
+      * public override Boolean ***HasErrors***()
+      * public override String ***ToString***()
 1. public class **QuestsManager** : MonoBehaviour
 1. public abstract class **StoryEvent** : ScriptableObject
    * Actions: 
@@ -79,15 +86,7 @@ Scriptable Object Quests.
       * public virtual void ***OnValidate***()
       * public virtual Boolean ***HasErrors***()
       * public abstract String ***GetDocumentation***()
-### Conditions
-1. public class **ConditionQuestRequirementState** : Condition
-   * Properties: 
-      * public Sprite ***Depiction***  { get; }
-   * Methods: 
-      * public override Boolean ***Evaluate***()
-      * public override Boolean ***HasErrors***()
-      * public override String ***ToString***()
-1. public class **ConditionQuestState** : Condition
+1. public class **StoryEventStateCondition** : Condition
    * Properties: 
       * public Sprite ***Depiction***  { get; }
    * Methods: 

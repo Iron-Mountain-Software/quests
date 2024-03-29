@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Inspectors
 {
     public abstract class StyledInspector : UnityEditor.Editor
     {

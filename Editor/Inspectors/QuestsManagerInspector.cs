@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Inspectors
 {
     [CustomEditor(typeof(QuestsManager), true)]
     public class SceneManagerInspector : UnityEditor.Editor

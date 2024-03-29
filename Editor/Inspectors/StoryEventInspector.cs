@@ -3,9 +3,9 @@ using IronMountain.ScriptableActions.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor
+namespace IronMountain.Quests.Editor.Inspectors
 {
-    public abstract class StoryEventEditor : StyledInspector
+    public abstract class StoryEventInspector : StyledInspector
     {
         private StoryEvent _storyEvent;
         private ConditionEditor _prerequisitesEditor;

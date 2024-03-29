@@ -1,12 +1,11 @@
 using IronMountain.Conditions.Editor;
-using IronMountain.Quests.Conditions;
 using UnityEditor;
 using UnityEngine;
 
-namespace IronMountain.Quests.Editor.Conditions
+namespace IronMountain.Quests.Editor.Inspectors
 {
-    [CustomEditor(typeof(ConditionQuestRequirementState), true)]
-    public class ConditionQuestRequirementStateInspector : ConditionInspector
+    [CustomEditor(typeof(StoryEventStateCondition), true)]
+    public class StoryEventStateConditionInspector : ConditionInspector
     {
         protected override void DrawProperties()
         {
