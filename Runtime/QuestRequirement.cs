@@ -126,10 +126,9 @@ namespace IronMountain.Quests
         public override void OnValidate()
         {
             base.OnValidate();
-            if (quest && EditorUtility.IsDirty(this))
-            {
-                EditorUtility.SetDirty(quest);
-            }
+            if (!quest) return;
+            quest.OnValidate();
+            if (EditorUtility.IsDirty(this)) EditorUtility.SetDirty(quest);
         }
 
         public bool DescriptionHasErrors =>

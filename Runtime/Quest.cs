@@ -209,10 +209,46 @@ namespace IronMountain.Quests
         private void RenameComponents()
         {
             int integerPrefix = 0, decimalPrefix = 0;
+            
             if (prerequisites)
             {
-                prerequisites.name = "0.0 ─ Prerequisites - " + prerequisites;
+                prerequisites.name = integerPrefix + "." + decimalPrefix + " ─ Prerequisites - " + prerequisites;
+                decimalPrefix++;
             }
+            
+            foreach (ScriptableAction action in actionsOnActivate)
+            {
+                if (!action) continue;
+                action.name = integerPrefix + "." + decimalPrefix + " ─ On Activate - " + action;
+                decimalPrefix++;
+            }
+            
+            if (failCondition)
+            {
+                failCondition.name = integerPrefix + "." + decimalPrefix + " ─ To Fail - " + failCondition;
+                decimalPrefix++;
+            }
+            
+            foreach (ScriptableAction action in actionsOnFail)
+            {
+                if (!action) continue;
+                action.name = integerPrefix + "." + decimalPrefix + " ─ On Fail - " + action;
+                decimalPrefix++;
+            }
+            
+            if (completionCondition)
+            {
+                completionCondition.name = integerPrefix + "." + decimalPrefix + " ─ To Complete - " + completionCondition;
+                decimalPrefix++;
+            }
+            
+            foreach (ScriptableAction action in actionsOnComplete)
+            {
+                if (!action) continue;
+                action.name = integerPrefix + "." + decimalPrefix + " ─ On Complete - " + action;
+                decimalPrefix++;
+            }
+
             for (int i = 0; i < Requirements.Count; i++)
             {
                 QuestRequirement requirement = Requirements[i];
@@ -220,45 +256,61 @@ namespace IronMountain.Quests
                 string prefix = (i + 1).ToString();
                 bool noCondition = !requirement.completionCondition;
                 bool noActions = requirement.actionsOnActivate.Count == 0
+                                  && requirement.actionsOnFail.Count == 0
                                   && requirement.actionsOnComplete.Count == 0;
                 requirement.name = prefix + (noCondition && noActions ? ".0 ─ " : ".0 ┬ ") + requirement.Detail;
                 decimalPrefix = 1;
-                if (requirement.completionCondition)
+                
+                if (requirement.prerequisites)
                 {
+                    requirement.prerequisites.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Prerequisites - " + requirement.prerequisites;
                     decimalPrefix++;
-                    requirement.completionCondition.name = prefix + "." + decimalPrefix + (noActions ? " └─ " : " ├─ ") + " Condition - " + requirement.completionCondition;
                 }
+                
                 for (int onTrackIndex = 0; onTrackIndex < requirement.actionsOnActivate.Count; onTrackIndex++)
                 {
                     ScriptableAction action = requirement.actionsOnActivate[onTrackIndex];
                     if (!action) continue;
                     bool isLast = onTrackIndex == requirement.actionsOnActivate.Count - 1 && requirement.actionsOnComplete.Count == 0;
+                    action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Activate - " + action;
                     decimalPrefix++;
-                    action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Track - " + action.ToString();
                 }
-                for (int onCompleteIndex = 0; onCompleteIndex < Requirements[i].actionsOnComplete.Count; onCompleteIndex++)
+                
+                if (requirement.failCondition)
+                {
+                    bool isLast = requirement.actionsOnFail is null or {Count: 0}
+                                  && !requirement.completionCondition
+                                  && requirement.actionsOnComplete is null or {Count: 0};
+                    requirement.failCondition.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " To Fail - " + requirement.failCondition;
+                    decimalPrefix++;
+                }
+
+                for (int onFailIndex = 0; onFailIndex < Requirements[i].actionsOnFail.Count; onFailIndex++)
+                {
+                    ScriptableAction action = requirement.actionsOnFail[onFailIndex];
+                    if (!action) continue;
+                    bool isLast = onFailIndex == requirement.actionsOnFail.Count - 1
+                        && !requirement.completionCondition
+                        && requirement.actionsOnComplete is null or {Count: 0};
+                    action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Fail - "  + action;
+                    decimalPrefix++;
+                }
+                
+                if (requirement.completionCondition)
+                {
+                    bool isLast = requirement.actionsOnComplete is null or {Count: 0};
+                    requirement.completionCondition.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " To Complete - " + requirement.completionCondition;
+                    decimalPrefix++;
+                }
+                
+                for (int onCompleteIndex = 0; onCompleteIndex < requirement.actionsOnComplete.Count; onCompleteIndex++)
                 {
                     ScriptableAction action = requirement.actionsOnComplete[onCompleteIndex];
                     if (!action) continue;
                     bool isLast = onCompleteIndex == requirement.actionsOnComplete.Count - 1;
-                    decimalPrefix++;
                     action.name = prefix + "." + decimalPrefix + (isLast ? " └─ " : " ├─ ") + " On Complete - "  + action;
+                    decimalPrefix++;
                 }
-            }
-
-            integerPrefix = requirements.Count + 1;
-            decimalPrefix = 0;
-            foreach (ScriptableAction action in actionsOnActivate)
-            {
-                if (!action) continue;
-                action.name = integerPrefix + "." + decimalPrefix + " ─ On Start - " + action;
-                decimalPrefix++;
-            }
-            foreach (ScriptableAction action in actionsOnComplete)
-            {
-                if (!action) continue;
-                action.name = integerPrefix + "." + decimalPrefix + " On Complete - " + action;
-                decimalPrefix++;
             }
         }
 

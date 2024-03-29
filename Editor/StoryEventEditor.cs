@@ -24,11 +24,29 @@ namespace IronMountain.Quests.Editor
             base.OnEnable();
             if (target) _storyEvent = (StoryEvent) target;
             _prerequisitesEditor = new ConditionEditor("Prerequisites", _storyEvent,
-                newCondition => _storyEvent.prerequisites = newCondition);
+                newCondition =>
+                {
+                    _storyEvent.prerequisites = newCondition;
+                    _storyEvent.OnValidate();
+                    EditorUtility.SetDirty(_storyEvent);
+                    AssetDatabase.SaveAssets();
+                });
             _toCompleteEditor = new ConditionEditor("To Complete", _storyEvent,
-                newCondition => _storyEvent.completionCondition = newCondition);
+                newCondition =>
+                {
+                    _storyEvent.completionCondition = newCondition;
+                    _storyEvent.OnValidate();
+                    EditorUtility.SetDirty(_storyEvent);
+                    AssetDatabase.SaveAssets();
+                });
             _toFailEditor = new ConditionEditor("To Fail", _storyEvent,
-                newCondition => _storyEvent.failCondition = newCondition);
+                newCondition =>
+                {
+                    _storyEvent.failCondition = newCondition;
+                    _storyEvent.OnValidate();
+                    EditorUtility.SetDirty(_storyEvent);
+                    AssetDatabase.SaveAssets();
+                });
             _onActivateActionsEditor = new ScriptableActionsEditor("On Activate", _storyEvent, _storyEvent ? _storyEvent.actionsOnActivate : null);
             _onCompleteActionsEditor = new ScriptableActionsEditor("On Complete", _storyEvent, _storyEvent ? _storyEvent.actionsOnComplete : null);
             _onFailActionsEditor = new ScriptableActionsEditor("On Fail", _storyEvent, _storyEvent ? _storyEvent.actionsOnFail : null);
