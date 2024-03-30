@@ -185,20 +185,17 @@ namespace IronMountain.Quests
         private void RefreshIsListeningState()
         {
             bool shouldListen = false;
-            Debug.Log(name + " TESTING AND RESETTING");
             if (universal) shouldListen = true;
             else
             {
                 for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
-                    Debug.Log(name + " list contains: " + SceneManager.GetSceneAt(i).name + " " + sceneNames.Contains(SceneManager.GetSceneAt(i).name));
                     Scene scene = SceneManager.GetSceneAt(i);
                     if (!scene.isLoaded || !sceneNames.Contains(scene.name)) continue;
                     shouldListen = true;
                     break;
                 }
             }
-            Debug.Log(name + " should listen:" + shouldListen);
             IsListening = shouldListen;
         }
         
