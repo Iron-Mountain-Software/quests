@@ -158,7 +158,6 @@ namespace IronMountain.Quests
 
         protected override void OnEnable()
         {            
-            RefreshIsListeningState();
             base.OnEnable();
             QuestsManager.Register(this);
             SceneManager.sceneLoaded += SceneLoaded;
@@ -184,6 +183,7 @@ namespace IronMountain.Quests
             {
                 for (int i = 0; i < SceneManager.loadedSceneCount; i++)
                 {
+                    Debug.Log(name + " list contains: " + SceneManager.GetSceneAt(i).name + " " + sceneNames.Contains(SceneManager.GetSceneAt(i).name));
                     if (!sceneNames.Contains(SceneManager.GetSceneAt(i).name)) continue;
                     shouldListen = true;
                     break;
