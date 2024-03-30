@@ -79,8 +79,14 @@ namespace IronMountain.Quests.Editor.Inspectors
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("conclusion"), new GUIContent("Conclusion"));
             }
             
-            GUILayout.Space(5);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("universal"), new GUIContent("Universal"));
+            if (!serializedObject.FindProperty("universal").boolValue)
+            {
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("sceneAssets"), new GUIContent("Valid Scenes:"));
+            }
             
+            GUILayout.Space(5);
+
             DrawPropertiesExcluding(serializedObject,
                 "m_Script",
                 "id",
@@ -96,7 +102,10 @@ namespace IronMountain.Quests.Editor.Inspectors
                 "prerequisites",
                 "completionCondition",
                 "failCondition",
-                "requirements"
+                "requirements",
+                "universal",
+                "sceneAssets",
+                "sceneNames"
             );
 
             EditorGUILayout.EndVertical();

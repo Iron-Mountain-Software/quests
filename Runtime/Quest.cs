@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using IronMountain.SaveSystem;
 using IronMountain.ScriptableActions;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Localization;
+using UnityEngine.SceneManagement;
 
 namespace IronMountain.Quests
 {
@@ -19,7 +21,8 @@ namespace IronMountain.Quests
             Main,
             Side
         }
-        
+
+        public event Action OnIsListeningChanged;
         public static event Action<Quest> OnAnyViewsChanged;
         public event Action OnViewsChanged;
         
@@ -32,11 +35,15 @@ namespace IronMountain.Quests
 
         [SerializeField] private StoryType type;
         [SerializeField] private int priority;
-        
+        [SerializeField] private bool universal = true;
+        [SerializeField] private List<SceneAsset> sceneAssets;
+        [SerializeField] private List<string> sceneNames;
+
         [SerializeField] private List<QuestRequirement> requirements = new();
         
         private SavedInt _views;
-
+        private bool _isListening;
+        
         public int Priority
         {
             get => priority;
@@ -93,7 +100,6 @@ namespace IronMountain.Quests
 #endif
             }
             set => defaultDescription = value;
-
         }
 
         public string Conclusion
@@ -118,6 +124,17 @@ namespace IronMountain.Quests
             set => defaultConclusion = value;
         }
 
+        public bool IsListening
+        {
+            get => _isListening;
+            set
+            {
+                if (_isListening == value) return;
+                _isListening = value;
+                OnIsListeningChanged?.Invoke();
+            }
+        }
+        
         public int Views
         {
             get => _views.Value;
@@ -128,20 +145,53 @@ namespace IronMountain.Quests
             }
         }
         
+        protected override bool PrerequisitesSatisfied =>
+            IsListening && base.PrerequisitesSatisfied;
+
+        protected override bool CompletionConditionSatisfied =>
+            IsListening && base.CompletionConditionSatisfied;
+
+        protected override bool FailConditionSatisfied =>
+            IsListening && base.FailConditionSatisfied;
+        
         protected override string Directory => Path.Combine("Quests", ID);
 
         protected override void OnEnable()
-        {
+        {            
+            RefreshIsListeningState();
             base.OnEnable();
             QuestsManager.Register(this);
+            SceneManager.sceneLoaded += SceneLoaded;
+            SceneManager.sceneUnloaded += SceneUnloaded;
         }
-
+        
         protected override void OnDisable()
         {
             base.OnDisable();
             QuestsManager.Unregister(this);
+            SceneManager.sceneLoaded -= SceneLoaded;
+            SceneManager.sceneUnloaded -= SceneUnloaded;
         }
+        
+        private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode) => RefreshIsListeningState();
+        private void SceneUnloaded(Scene scene) => RefreshIsListeningState();
 
+        private void RefreshIsListeningState()
+        {
+            bool shouldListen = false;
+            if (universal) shouldListen = true;
+            else
+            {
+                for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+                {
+                    if (!sceneNames.Contains(SceneManager.GetSceneAt(i).name)) continue;
+                    shouldListen = true;
+                    break;
+                }
+            }
+            _isListening = shouldListen;
+        }
+        
         protected override void LoadSavedData()
         {
             base.LoadSavedData();
@@ -192,8 +242,20 @@ namespace IronMountain.Quests
         public override void OnValidate()
         {
             base.OnValidate();
+            RefreshScenes();
             PruneRequirements();
             RenameComponents();
+        }
+
+        private void RefreshScenes()
+        {
+            sceneNames.Clear();
+            if (universal) sceneAssets.Clear();
+            foreach (SceneAsset sceneAsset in sceneAssets)
+            {
+                if (!sceneAsset) continue;
+                sceneNames.Add(sceneAsset.name);
+            }
         }
 
         [ContextMenu("Prune Requirements")]

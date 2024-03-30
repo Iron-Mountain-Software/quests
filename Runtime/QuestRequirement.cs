@@ -77,13 +77,13 @@ namespace IronMountain.Quests
         }
 
         protected override bool PrerequisitesSatisfied =>
-            Quest && Quest.State == StateType.Active && base.PrerequisitesSatisfied;
+            Quest && Quest.IsListening && Quest.State == StateType.Active && base.PrerequisitesSatisfied;
 
         protected override bool CompletionConditionSatisfied =>
-            Quest && Quest.State == StateType.Active && base.CompletionConditionSatisfied;
+            Quest && Quest.IsListening && Quest.State == StateType.Active && base.CompletionConditionSatisfied;
 
         protected override bool FailConditionSatisfied =>
-            Quest && Quest.State == StateType.Active && base.FailConditionSatisfied;
+            Quest && Quest.IsListening && Quest.State == StateType.Active && base.FailConditionSatisfied;
         
         protected override void OnEnable()
         {

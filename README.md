@@ -1,5 +1,5 @@
 # Quests
-*Version: 2.0.4*
+*Version: 2.0.5*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
@@ -25,6 +25,7 @@ Scriptable Object Quests.
       * public override String ***ToString***()
 1. public class **Quest** : StoryEvent
    * Actions: 
+      * public event Action ***OnIsListeningChanged*** 
       * public event Action ***OnViewsChanged*** 
    * Properties: 
       * public Int32 ***Priority***  { get; set; }
@@ -33,6 +34,7 @@ Scriptable Object Quests.
       * public String ***Name***  { get; set; }
       * public String ***Description***  { get; set; }
       * public String ***Conclusion***  { get; set; }
+      * public Boolean ***IsListening***  { get; set; }
       * public Int32 ***Views***  { get; set; }
       * public Boolean ***DescriptionHasErrors***  { get; }
       * public Boolean ***RequirementsHaveErrors***  { get; }
