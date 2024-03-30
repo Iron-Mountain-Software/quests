@@ -80,7 +80,11 @@ namespace IronMountain.Quests.Editor.Inspectors
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("conclusion"), new GUIContent("Conclusion"));
             }
             
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("universal"), new GUIContent("Universal"));
+            GUILayout.Label(_quest.IsListening ? "Listening" : "Not Listening", _quest.IsListening ? Complete : Fail);
+            EditorGUILayout.EndHorizontal();
+            
             if (!serializedObject.FindProperty("universal").boolValue)
             {
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("sceneAssets"), new GUIContent("Valid Scenes:"));

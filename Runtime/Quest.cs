@@ -189,7 +189,7 @@ namespace IronMountain.Quests
                     break;
                 }
             }
-            _isListening = shouldListen;
+            IsListening = shouldListen;
         }
         
         protected override void LoadSavedData()
@@ -212,6 +212,7 @@ namespace IronMountain.Quests
         public override void Refresh()
         {
             StopListening();
+            RefreshIsListeningState();
             StateType state = State;
             if (state is StateType.Inactive) Restart();
             else if (state is StateType.Active) Activate();
