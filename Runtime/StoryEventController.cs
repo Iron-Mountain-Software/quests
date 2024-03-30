@@ -37,7 +37,7 @@ namespace IronMountain.Quests
             
             public void Invoke()
             {
-                if (storyEvent) return;
+                if (!storyEvent) return;
                 switch (action)
                 {
                     case ActionType.Restart:
