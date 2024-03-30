@@ -13,7 +13,7 @@ namespace IronMountain.Quests.Editor.Inspectors
 
         private Vector2 _selectedQuestRequirementScroll;
         private UnityEditor.Editor _cachedEditor;
-        private GUIContent _errorIconContent = new (EditorGUIUtility.IconContent("console.erroricon"));
+        private GUIContent _errorIconContent;
 
         private bool _localize;
 
@@ -21,6 +21,7 @@ namespace IronMountain.Quests.Editor.Inspectors
         {
             base.OnEnable();
             if (target) _quest = (Quest) target;
+            _errorIconContent ??= new GUIContent(EditorGUIUtility.IconContent("console.erroricon"));
         }
 
         public override void OnInspectorGUI()
