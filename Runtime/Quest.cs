@@ -179,7 +179,6 @@ namespace IronMountain.Quests
 
         private void SceneUnloaded(Scene scene)
         {
-            if (!sceneNames.Contains(scene.name)) return;
             RefreshIsListeningState();
         }
 
@@ -190,10 +189,11 @@ namespace IronMountain.Quests
             if (universal) shouldListen = true;
             else
             {
-                for (int i = 0; i < SceneManager.loadedSceneCount; i++)
+                for (int i = 0; i < SceneManager.sceneCount; i++)
                 {
                     Debug.Log(name + " list contains: " + SceneManager.GetSceneAt(i).name + " " + sceneNames.Contains(SceneManager.GetSceneAt(i).name));
-                    if (!sceneNames.Contains(SceneManager.GetSceneAt(i).name)) continue;
+                    Scene scene = SceneManager.GetSceneAt(i);
+                    if (!scene.isLoaded || !sceneNames.Contains(scene.name)) continue;
                     shouldListen = true;
                     break;
                 }
