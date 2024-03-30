@@ -172,8 +172,16 @@ namespace IronMountain.Quests
             SceneManager.sceneUnloaded -= SceneUnloaded;
         }
         
-        private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode) => RefreshIsListeningState();
-        private void SceneUnloaded(Scene scene) => RefreshIsListeningState();
+        private void SceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (sceneNames.Contains(scene.name)) IsListening = true;
+        }
+
+        private void SceneUnloaded(Scene scene)
+        {
+            if (!sceneNames.Contains(scene.name)) return;
+            RefreshIsListeningState();
+        }
 
         private void RefreshIsListeningState()
         {
