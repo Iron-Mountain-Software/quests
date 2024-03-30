@@ -178,6 +178,7 @@ namespace IronMountain.Quests
         private void RefreshIsListeningState()
         {
             bool shouldListen = false;
+            Debug.Log(name + " TESTING AND RESETTING");
             if (universal) shouldListen = true;
             else
             {
@@ -189,6 +190,7 @@ namespace IronMountain.Quests
                     break;
                 }
             }
+            Debug.Log(name + " should listen:" + shouldListen);
             IsListening = shouldListen;
         }
         
