@@ -99,17 +99,17 @@ namespace IronMountain.Quests
         public bool CanComplete => State is StateType.Active && CompletionConditionSatisfied;
         public bool CanFail => State is StateType.Active && FailConditionSatisfied;
 
-        protected void TryActivate()
+        public void TryActivate()
         {
             if (CanActivate) Activate();
         }
         
-        protected void TryComplete()
+        public void TryComplete()
         {
             if (CanComplete) Complete();
         }
         
-        protected void TryFail()
+        public void TryFail()
         {
             if (CanFail) Fail();
         }

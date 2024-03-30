@@ -1,5 +1,5 @@
 # Quests
-*Version: 2.0.2*
+*Version: 2.0.4*
 ## Description: 
 Scriptable Object Quests.
 ## Use Cases: 
@@ -79,6 +79,9 @@ Scriptable Object Quests.
       * public Boolean ***FailConditionHasErrors***  { get; }
    * Methods: 
       * public abstract void ***Refresh***()
+      * public void ***TryActivate***()
+      * public void ***TryComplete***()
+      * public void ***TryFail***()
       * public virtual void ***Restart***()
       * public virtual void ***Activate***()
       * public virtual void ***Complete***()
@@ -86,6 +89,7 @@ Scriptable Object Quests.
       * public virtual void ***OnValidate***()
       * public virtual Boolean ***HasErrors***()
       * public abstract String ***GetDocumentation***()
+1. public class **StoryEventController** : MonoBehaviour
 1. public class **StoryEventStateCondition** : Condition
    * Properties: 
       * public Sprite ***Depiction***  { get; }
