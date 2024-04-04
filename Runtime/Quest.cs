@@ -36,9 +36,10 @@ namespace IronMountain.Quests
         [SerializeField] private StoryType type;
         [SerializeField] private int priority;
         [SerializeField] private bool universal = true;
+#if UNITY_EDITOR
         [SerializeField] private List<SceneAsset> sceneAssets;
+#endif
         [SerializeField] private List<string> sceneNames;
-
         [SerializeField] private List<QuestRequirement> requirements = new();
         
         private SavedInt _views;

@@ -94,7 +94,6 @@ namespace IronMountain.Quests
         }
 
         public abstract void Refresh();
-
         public bool CanActivate => State is StateType.Inactive && PrerequisitesSatisfied;
         public bool CanComplete => State is StateType.Active && CompletionConditionSatisfied;
         public bool CanFail => State is StateType.Active && FailConditionSatisfied;
