@@ -37,9 +37,9 @@ namespace IronMountain.Quests
         [SerializeField] private int priority;
         [SerializeField] private bool universal = true;
 #if UNITY_EDITOR
-        [SerializeField] private List<SceneAsset> sceneAssets;
+        [SerializeField] private List<SceneAsset> sceneAssets = new ();
 #endif
-        [SerializeField] private List<string> sceneNames;
+        [SerializeField] private List<string> sceneNames = new ();
         [SerializeField] private List<QuestRequirement> requirements = new();
         
         private SavedInt _views;
